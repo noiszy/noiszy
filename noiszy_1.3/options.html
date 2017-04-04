@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Noiszy Options</title>
+<style>
+body {
+    background-color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-left: 20px;
+}
+  
+div {
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+}
+  
+button {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  margin: 0px 0px 6px 0px;
+}
+
+h2 {
+//    color: maroon;
+//    margin-left: 40px;
+} 
+  
+.name {
+    font-family: Arial, Helvetica, sans-serif;
+//    font-family: "proxima-nova";
+    font-size: 20px;
+//    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    font-style: normal;
+    margin-left: 16px;
+}
+.tagline {
+//    font-family: Arial, Helvetica, sans-serif;
+    font-family: "adobe-garamond-pro, serif";
+    font-size: 14px;
+    line-height: 1.5em;
+    text-transform: none;
+    letter-spacing: 1px;
+//    font-weight: 600;
+    font-style: italic;
+    margin-left: 16px;
+}
+  
+.box {
+  border-style: solid;
+  border-color: #BBBBBB; 
+  border-width: 1px;
+  padding: 16px;
+}
+
+.outline-box {
+  width: 400px;
+}
+
+.status-box {
+  width: 90px;
+  padding: 16px;
+  margin: 0px 20px 0px 0px;
+  font-family: Courier, Fixed;
+  font-size: 16px;
+  float: left;
+  background-color: #f6fc7d;
+}
+
+#status-buttons {
+  float: right;
+}
+
+.indent {
+  margin-left: 16px;
+}
+  
+.site {
+  //
+}
+
+#save {
+  margin-left: 16px;
+}
+  
+</style>  
+</head>
+<body>
+
+  <div class="box outline-box">
+
+    <img src="icon_c_48.png" style="float: left;">
+    <span class="name">NOISZY</span><br>
+    <span class="tagline">They're listening. Make some noise.</span>
+
+    <div style='clear:both'></div>
+
+    <h2>Status:</h2>
+    <div class="indent">
+    <div>
+      <div id="enabled_status" class="box status-box">Loading...</div>
+    <div id="status_buttons">
+    <button id="enable"> &nbsp; Start &nbsp; </button><br>
+    <button id="disable"> &nbsp; Stop &nbsp; </button>
+    </div>
+    </div>
+    </div>
+
+    <div style='clear:both'></div>
+
+    <h2>Sites to visit:</h2>
+    <div id="sites" class="indent">
+      <div id="default_sites">
+      </div>
+    </div>
+
+    <p>
+    <button id="save"> &nbsp; Update & save site list &nbsp; </button>
+    <div id="status"></div>
+    </p>
+  
+    <p>
+      For instructions or assistance, please <a href="https://noiszy.com/instructions-faqs/">visit our support page</a>.
+    </p>
+  </div>
+  
+<script src="options.js"></script>
+</body>
+</html>
