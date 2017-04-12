@@ -22,11 +22,19 @@ var settings = {
         "checked": "true"
       },
       {
-        "url": "http://www.msnbc.com/",
+        "url": "http://www.msnbc.com",
         "checked": "true"
       },
       {
         "url": "http://www.foxnews.com",
+        "checked": "true"
+      },
+      {
+        "url": "https://www.theguardian.com",
+        "checked": "true"
+      },
+      {
+        "url": "http://www.bbc.com",
         "checked": "true"
       },
 /*      {
