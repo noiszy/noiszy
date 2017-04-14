@@ -1,5 +1,7 @@
 var settings = {
   "sites": {
+    "user" : [
+    ],
     "default" : [
       {
         "url": "http://www.nbcnews.com",

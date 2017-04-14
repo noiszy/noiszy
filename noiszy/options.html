@@ -85,6 +85,7 @@ h2 {
 }
   
 </style>  
+  
 </head>
 <body>
 
@@ -109,10 +110,18 @@ h2 {
 
     <div style='clear:both'></div>
 
-    <h2>Sites to visit:</h2>
     <div id="sites" class="indent">
-      <div id="default_sites">
+      <h2>Default sites to visit:</h2>
+      <div id="default_sites"></div>
+      <h2>User-added sites to visit:</h2>
+      <div id="add_site_form_div">
+<!--        <form id="add_site_form">-->
+          <input type="text" id="new_site" value="Mickey">
+<!--          <input type="submit" id="add_site_button" value="Add">-->
+        <button id="add_site_button"> &nbsp; Add &nbsp; </button>
+<!--        </form>-->
       </div>
+      <div id="user_sites"></div>
     </div>
 
     <p>

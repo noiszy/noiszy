@@ -12,20 +12,32 @@ _gaq.push(['_trackPageview']);
 // Saves options to chrome.storage
 function save_options() {
 
-  // get the inputs
+  // get the default inputs
   var default_sites = document.getElementById("default_sites");
-  var site_list = default_sites.getElementsByTagName("input");
+  var default_site_list = default_sites.getElementsByTagName("input");
   var sites_formatted = new Object();
   sites_formatted.default = [];
-  console.log("site list: ",site_list);
+  console.log("default_site list: ",default_site_list);
   // loop through the displayed sites and make an array; then update what's saved
-  for (var i=0; i < site_list.length; i++) { 
-    console.log("i: ",i,site_list[i]);
+  for (var i=0; i < default_site_list.length; i++) { 
+    console.log("i: ",i,default_site_list[i]);
     sites_formatted.default[i] = new Object();
-    sites_formatted.default[i].url = site_list[i].value;
-    sites_formatted.default[i].checked = site_list[i].checked;
+    sites_formatted.default[i].url = default_site_list[i].value;
+    sites_formatted.default[i].checked = default_site_list[i].checked;
   }
   
+  // get the user inputs
+  var user_sites = document.getElementById("user_sites");
+  var user_site_list = user_sites.getElementsByTagName("input");
+  sites_formatted.user = [];
+  console.log("user_site list: ",user_site_list);
+  // loop through the displayed sites and make an array; then update what's saved
+  for (var i=0; i < user_site_list.length; i++) { 
+    console.log("i: ",i,user_site_list[i]);
+    sites_formatted.user[i] = new Object();
+    sites_formatted.user[i].url = user_site_list[i].value;
+    sites_formatted.user[i].checked = user_site_list[i].checked;
+  }
 
   chrome.storage.local.set({
     sites: sites_formatted
@@ -36,8 +48,8 @@ function save_options() {
     chrome.storage.local.get('sites', function (result) {
       console.log(result.sites)
       
-      //also pretend we clicked "Start" so the new vals are loaded
-      enable_script();
+      // also pretend we clicked "Start" so the new vals are loaded
+      // enable_script();
     });
 
     setTimeout(function() {
@@ -73,6 +85,129 @@ function enable_script() {
   });
 }
 
+
+function add_user_site() {
+  console.log("adding site");
+  
+  //get value from HTML
+  var new_site = document.getElementById("new_site").value;
+  console.log("new_site", new_site)
+  
+  //check against blacklist
+  try {
+    if (newsite.indexOf("amazon.") > -1) {
+      console.log("amazon");
+    }
+  } catch(e) {
+  }
+  
+  //add to storage
+  console.log("adding to storage");
+  //get current values
+  chrome.storage.local.get({
+    enabled: 'Ready',
+    sites: 'sites'
+  }, function(items) {
+    
+    console.log("sites: ",items.sites);
+    
+    //add to items with new value
+    var i = 0;
+    if (items.sites.user) {
+      i = items.sites.user.length;
+    } else {
+      items.sites.user = new Object();
+    }
+    items.sites.user[i] = new Object();
+    items.sites.user[i].url = new_site;
+    items.sites.user[i].checked = "checked";
+    
+    console.log("items.sites.user",items.sites.user);
+    
+    chrome.storage.local.set({
+      sites: items.sites
+    }, function() {
+      console.log("added it",sites);
+      
+      chrome.storage.local.get({
+        enabled: 'Ready',
+        sites: 'sites'
+      }, function(items) {
+
+        console.log("enabled: ",items.enabled);
+        console.log("sites: ",items.sites);
+
+        //rewrite full list of user sites
+        write_sites_to_page(items);
+      });
+
+    });
+   
+    
+  });
+  
+  
+  
+  return false;
+}
+
+// writes a site to the site list on the page
+function write_site_to_div(site, div, i) {
+  var thisid, thisurl, thisinput, thislabel;
+  thisid = "s" + i;
+  thisurl = site.url;
+  thischecked = site.checked;
+
+  thisinput = document.createElement("input");
+  thisinput.setAttribute("id", thisid);
+  thisinput.setAttribute("type", "checkbox");
+  thisinput.setAttribute("class", "site");
+  if (thischecked) {
+    thisinput.setAttribute("checked", "checked");
+  }
+
+  thisinput.setAttribute("value", thisurl);
+
+  thislabel = document.createElement("label");
+  thislabel.setAttribute("for", thisid);
+  thislabel.textContent = thisurl;
+
+  div.appendChild(thisinput);
+  div.appendChild(thislabel);
+  div.appendChild(document.createElement("br"));
+  
+  return;
+}
+  
+
+function write_sites_to_page(items) {
+  
+  // default sites first
+  document.getElementById("default_sites").innerHTML= "";
+  try {
+    console.log("items.sites.default", items.sites.default);
+    var default_sites = document.getElementById("default_sites");
+    for (var i = 0; i < items.sites.default.length; i++) { 
+      write_site_to_div(items.sites.default[i], default_sites, i);
+    }
+  } catch(e) {}
+
+  // now user sites; start #ing at default+1
+  var offset = items.sites.default.length;
+  console.log("user_sites div:",document.getElementById("user_sites"));
+  document.getElementById("user_sites").innerHTML = "";
+  try {
+    console.log("items.sites.user",items.sites.user);
+    var user_sites = document.getElementById("user_sites");
+    for (var i = 0; i < items.sites.user.length; i++) { 
+      console.log("writing site", i);
+      write_site_to_div(items.sites.user[i], user_sites, i+offset);
+    }
+  } catch(e) {}
+
+  return;
+}
+
 // Restores select box and checkbox state using the preferences
 // stored in chrome.storage.
 function restore_options() {
@@ -86,40 +221,8 @@ function restore_options() {
     console.log("enabled: ",items.enabled);
     console.log("sites: ",items.sites);
     
-    // new - output site list
-    var default_sites = document.getElementById("default_sites");
-    var thisid, thisurl, thisinput, thislabel;
-    for (var i = 0; i < items.sites.default.length; i++) { 
-      thisid = "s" + i;
-      thisurl = items.sites.default[i].url;
-      thischecked = items.sites.default[i].checked;
-      
-      thisinput = document.createElement("input");
-      thisinput.setAttribute("id", thisid);
-      thisinput.setAttribute("type", "checkbox");
-      thisinput.setAttribute("class", "site");
-      if (thischecked) {
-        thisinput.setAttribute("checked", "checked");
-      }
-
-      thisinput.setAttribute("value", thisurl);
-      
-      thislabel = document.createElement("label");
-      thislabel.setAttribute("for", thisid);
-      thislabel.textContent = thisurl;
-
-      default_sites.appendChild(thisinput);
-      default_sites.appendChild(thislabel);
-      default_sites.appendChild(document.createElement("br"));
-    }
+    write_sites_to_page(items);
     
-//    document.getElementById('enabled_status').textContent = items.enabled;
-/*    if (items.enabled == "Enabled" || items.enabled == "Ready") {
-      document.getElementById('enabled_status').textContent = "Ready";
-    } else if (items.enabled == "Disabled" || items.enabled == "Waiting") {
-      document.getElementById('enabled_status').textContent = "Waiting";
-    }
-*/
     document.getElementById('enabled_status').textContent = items.enabled;
   });
 }
@@ -132,3 +235,5 @@ document.getElementById('disable').addEventListener('click',
     disable_script);
 document.getElementById('enable').addEventListener('click',
     enable_script);
+document.getElementById('add_site_button').addEventListener('click',
+    add_user_site);

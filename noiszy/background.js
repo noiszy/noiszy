@@ -27,7 +27,9 @@ function getRandomIntInclusive(min, max) {
 
 function open_new_site() {
   
-  chrome.storage.local.get({sites: []}, function (result) {
+  chrome.storage.local.get({
+    sites: []
+  }, function (result) {
     // the input argument is ALWAYS an object containing the queried keys
     // so we select the key we need
     var sites_default = result.sites.default;
@@ -181,12 +183,29 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 function initialize_noiszy() {
   console.log("initializing");
   console.log("settings",settings);
-  // copy from settings into local storage
   
+  
+  // copy default from settings into local storage
+//  var sites = settings.sites.default;
   var sites = settings.sites;
-  console.log("sites",sites);
+  console.log("settings sites",sites);
   
-  chrome.storage.local.set({sites: sites}, function () {
+  //in case of upgrading, we should check for existing values in storage
+  chrome.storage.local.get({
+    enabled: 'Ready',
+    sites: 'sites'
+  }, function(items) {
+    
+    console.log("enabled: ",items.enabled);
+    console.log("sites: ",items.sites);
+    var storage_sites = items.sites;
+  });
+
+  
+//  chrome.storage.local.set({sites: sites}, function () {
+  chrome.storage.local.set({
+    sites: sites
+  }, function () {
       // you can use strings instead of objects
       // if you don't  want to define default values
       chrome.storage.local.get('sites', function (result) {
