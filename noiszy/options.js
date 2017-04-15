@@ -122,12 +122,15 @@ function add_user_site() {
     items.sites.user[i].url = new_site;
     items.sites.user[i].checked = "checked";
     
-    console.log("items.sites.user",items.sites.user);
+//    console.log("items.sites.user",items.sites.user);
+//    console.log("sites: ",sites);
+    console.log("items.sites: ",items.sites);
+    console.log("items: ",items);
     
     chrome.storage.local.set({
       sites: items.sites
     }, function() {
-      console.log("added it",sites);
+      console.log("added it");
       
       chrome.storage.local.get({
         enabled: 'Ready',
@@ -227,9 +230,17 @@ function restore_options() {
   });
 }
 
+function reset_options() {  
+  chrome.runtime.sendMessage({msg: "reset"}, function(response) {
+//      console.log(response.farewell);
+  });
+}
+
 
 document.addEventListener('DOMContentLoaded', restore_options);
 document.getElementById('save').addEventListener('click',
+    save_options);
+document.getElementById('sites_wrapper').addEventListener('click',
     save_options);
 document.getElementById('disable').addEventListener('click',
     disable_script);
@@ -237,3 +248,5 @@ document.getElementById('enable').addEventListener('click',
     enable_script);
 document.getElementById('add_site_button').addEventListener('click',
     add_user_site);
+document.getElementById('reset_button').addEventListener('click',
+    reset_options);

@@ -6,7 +6,7 @@
 body {
     background-color: white;
     font-family: Arial, Helvetica, sans-serif;
-    margin-left: 20px;
+//    margin-left: 20px;
 }
   
 div {
@@ -24,25 +24,39 @@ h2 {
 //    color: maroon;
 //    margin-left: 40px;
 } 
+
+#sites_wrapper {
+  width: 100%;
+  padding: 0px 0px 0px 0px;
+}
+  
+#default_sites_wrapper {
+  width: 50%;
+  float: left;
+  margin-top: 0px;
+  padding-top: 10px;
+}
+  
+#user_sites_wrapper {
+  margin-left: 50%;
+  margin-top: 0px;
+  padding-top: 10px;
+}
   
 .name {
     font-family: Arial, Helvetica, sans-serif;
-//    font-family: "proxima-nova";
     font-size: 20px;
-//    text-transform: uppercase;
     letter-spacing: 2px;
     font-weight: 600;
     font-style: normal;
     margin-left: 16px;
 }
 .tagline {
-//    font-family: Arial, Helvetica, sans-serif;
     font-family: "adobe-garamond-pro, serif";
     font-size: 14px;
     line-height: 1.5em;
     text-transform: none;
     letter-spacing: 1px;
-//    font-weight: 600;
     font-style: italic;
     margin-left: 16px;
 }
@@ -55,7 +69,8 @@ h2 {
 }
 
 .outline-box {
-  width: 400px;
+  width: 500px;
+//  height: 800px;
 }
 
 .status-box {
@@ -80,10 +95,6 @@ h2 {
   //
 }
 
-#save {
-  margin-left: 16px;
-}
-  
 </style>  
   
 </head>
@@ -91,47 +102,58 @@ h2 {
 
   <div class="box outline-box">
 
-    <img src="icon_c_48.png" style="float: left;">
-    <span class="name">NOISZY</span><br>
-    <span class="tagline">They're listening. Make some noise.</span>
+    <div id="branding_wrapper">
+      <img src="icon_c_48.png" style="float: left;">
+      <span class="name">NOISZY</span><br>
+      <span class="tagline">They're listening. Make some noise.</span>
 
-    <div style='clear:both'></div>
-
-    <h2>Status:</h2>
-    <div class="indent">
-    <div>
-      <div id="enabled_status" class="box status-box">Loading...</div>
-    <div id="status_buttons">
-    <button id="enable"> &nbsp; Start &nbsp; </button><br>
-    <button id="disable"> &nbsp; Stop &nbsp; </button>
-    </div>
-    </div>
+      <div style='clear:both'></div>
     </div>
 
-    <div style='clear:both'></div>
-
-    <div id="sites" class="indent">
-      <h2>Default sites to visit:</h2>
-      <div id="default_sites"></div>
-      <h2>User-added sites to visit:</h2>
-      <div id="add_site_form_div">
-<!--        <form id="add_site_form">-->
-          <input type="text" id="new_site" value="Mickey">
-<!--          <input type="submit" id="add_site_button" value="Add">-->
-        <button id="add_site_button"> &nbsp; Add &nbsp; </button>
-<!--        </form>-->
+    <div id="status_wrapper">
+      <h2>Status:</h2>
+      <div class="indent">
+        <div>
+          <div id="enabled_status" class="box status-box">Loading...</div>
+          <div id="status_buttons">
+            <button id="enable"> &nbsp; Start &nbsp; </button><br>
+            <button id="disable"> &nbsp; Stop &nbsp; </button>
+          </div>
+          <div style='clear:both'></div>
+        </div>
       </div>
-      <div id="user_sites"></div>
     </div>
 
-    <p>
-    <button id="save"> &nbsp; Update & save site list &nbsp; </button>
-    <div id="status"></div>
-    </p>
-  
-    <p>
+
+    <div id="sites_wrapper">
+      <div id="default_sites_wrapper">
+        <h2>Default sites to visit:</h2>
+        <div id="default_sites" class="indent"></div>
+      </div>
+      
+      <div id="user_sites_wrapper">
+        <h2>User-added sites to visit:</h2>
+        <div id="add_site_form_div" class="indent">
+          <input type="text" id="new_site" value="wikipedia.org/wiki/Special:Random">
+          <button id="add_site_button"> &nbsp; Add &nbsp; </button>
+        </div>
+        <div id="user_sites" class="indent"></div>
+      </div>
+      <div style='clear:both'></div>
+      
+      <br>
+
+      <button id="save"> &nbsp; Update & save site list &nbsp; </button>
+      <div id="status"></div>
+    </div>
+
+    <div id="footer_wrapper">
+      <button id="reset_button"> &nbsp; Reset to defaults &nbsp; </button>
+      <div id="reset_status"></div>
+
       For instructions or assistance, please <a href="https://noiszy.com/instructions-faqs/">visit our support page</a>.
-    </p>
+    </div>
+    
   </div>
   
 <script src="options.js"></script>

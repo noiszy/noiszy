@@ -20,7 +20,7 @@ var settings = {
         "checked": "true"
       },
       {
-        "url": "https://www.theatlantic.com",
+        "url": "http://www.theatlantic.com",
         "checked": "true"
       },
       {
@@ -32,17 +32,13 @@ var settings = {
         "checked": "true"
       },
       {
-        "url": "https://www.theguardian.com",
+        "url": "http://www.theguardian.com",
         "checked": "true"
       },
       {
         "url": "http://www.bbc.com",
         "checked": "true"
       },
-/*      {
-        "url": "http://www.wikipedia.com",
-        "checked": "true"
-      },*/
       {
         "url": "http://www.breitbart.com",
         "checked": ""
@@ -53,14 +49,5 @@ var settings = {
       }
     ]
   },
-  "enabled": "Enabled",
-//  "null": null,
-  "minPvsPerSite": 0,
-  "maxPvsPerSite": 7
-//  "object": {
-//    "a": "b",
-//    "c": "d",
-//    "e": "f"
-//  },
-//  "string": "Hello World"
+  "enabled": "Enabled"
 }

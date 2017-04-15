@@ -174,52 +174,53 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 
     // create alarm so link will be clicked
     chrome.alarms.create("linkClick",{delayInMinutes: 0.3});
+    sendResponse({farewell: "open_new_site called"});
 
+  } else if (request.msg == "reset") {
+    initialize_noiszy(function(){});
+    sendResponse({farewell: "reset called"});
   }
   // we're done
-  sendResponse({farewell: "open_new_site called"});
 });
 
-function initialize_noiszy() {
+
+function initialize_noiszy(callbackFunction) {
   console.log("initializing");
   console.log("settings",settings);
-  
-  
+    
   // copy default from settings into local storage
-//  var sites = settings.sites.default;
   var sites = settings.sites;
   console.log("settings sites",sites);
   
-  //in case of upgrading, we should check for existing values in storage
-  chrome.storage.local.get({
+  // when upgrading, we should check for existing values in storage
+  // but make that optional
+/*  chrome.storage.local.get({
     enabled: 'Ready',
     sites: 'sites'
-  }, function(items) {
-    
+  }, function(items) {    
     console.log("enabled: ",items.enabled);
     console.log("sites: ",items.sites);
-    var storage_sites = items.sites;
+//    var storage_sites = items.sites;
+    sites = items.sites;
   });
+*/
 
   
 //  chrome.storage.local.set({sites: sites}, function () {
   chrome.storage.local.set({
     sites: sites
   }, function () {
-      // you can use strings instead of objects
-      // if you don't  want to define default values
       chrome.storage.local.get('sites', function (result) {
           console.log(result.sites)
       });
   });
   chrome.storage.local.set({enabled: "Waiting"}, function () {
-      // you can use strings instead of objects
-      // if you don't  want to define default values
       chrome.storage.local.get('enabled', function (result) {
           console.log(result.enabled)
       });
   });
 
+  callbackFunction();
 }
 
-initialize_noiszy();
+initialize_noiszy(function(){});
