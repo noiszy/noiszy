@@ -11,7 +11,6 @@ _gaq.push(['_setAccount', 'UA-96120302-2']);
 
 
 
-// A function to use as callback
 function track_clicked_link(link) {
     console.log('tracking this link:\n' + link);
     _gaq.push(['_trackPageview',link]);
@@ -30,35 +29,68 @@ function open_new_site() {
   chrome.storage.local.get({
     sites: []
   }, function (result) {
-    // the input argument is ALWAYS an object containing the queried keys
-    // so we select the key we need
-    var sites_default = result.sites.default;
 
     // build array of sites
     var sites = [];
+    
+    console.log("result",result);
+    console.log("result.sites",result.sites);
+    console.log("result.sites.length",result.sites.length);
+    
+
+    // should do this in a loop instead - fix this
+/*    for (var j=0; j<result.sites.length; j++) {
+      console.log("j",j,result.sites[j]);
+      var sites_default = result.sites[j];
+      for (var i=0; i < sites_default.length; i++) {
+        if (sites_default[i].checked) {
+          sites.push(sites_default[i].url);
+        }
+      }
+    }
+*/      
+    var sites_default = result.sites.default;
     for (var i=0; i < sites_default.length; i++) {
       if (sites_default[i].checked) {
-        sites[i] = sites_default[i].url;
+//        sites[i] = sites_default[i].url;
+        sites.push(sites_default[i].url);
+      }
+    }
+    var offset = sites_default.length;
+    var sites_user = result.sites.user;
+    for (var i=0; i < sites_user.length; i++) {
+      if (sites_user[i].checked) {
+//        sites[i+offset] = sites_user[i].url;
+        sites.push(sites_user[i].url);
       }
     }
 
-    console.log("sites");
-    console.log(sites);
+
+    console.log("sites",sites);
 
     var num = getRandomIntInclusive(0,sites.length-1);
     console.log(num);
+    
+    //prepend http if it doesn't already exist
+    var new_url = sites[num];
+    if (!/^https?\:\/\//i.test(sites[num])) {
+      new_url = "http://" + sites[num];
+    }
 
     chrome.storage.local.get('tabId', function (resultTabId) {
 
-      chrome.tabs.update(resultTabId.tabId, {url: sites[num]}, function() {
+//      chrome.tabs.update(resultTabId.tabId, {url: sites[num]}, function() {
+      chrome.tabs.update(resultTabId.tabId, {url: new_url}, function() {
         // in case we want to put anything here...
       });
-      chrome.storage.local.set({activeSite: sites[num]}, function() {
+//      chrome.storage.local.set({activeSite: sites[num]}, function() {
+      chrome.storage.local.set({activeSite: new_url}, function() {
         // in case we want to put anything here...
       });
 
       // GA tracking
-       _gaq.push(['_trackPageview', sites[num]]);
+//       _gaq.push(['_trackPageview', sites[num]]);
+       _gaq.push(['_trackPageview', new_url]);
 
     });
   });
@@ -67,9 +99,9 @@ function open_new_site() {
 
 // Called when the user clicks on the browser action.
 // currently overridden by the popup
-chrome.browserAction.onClicked.addListener(function(tab) {
+/*chrome.browserAction.onClicked.addListener(function(tab) {
 
-/*  var sites = settings.sites;
+  var sites = settings.sites;
   console.log("sites",sites);
   
   chrome.storage.local.set({sites: sites}, function () {
@@ -86,8 +118,9 @@ chrome.browserAction.onClicked.addListener(function(tab) {
           console.log(result.enabled)
       });
   });
-*/
+
 });
+*/
 
 
 chrome.alarms.onAlarm.addListener(function(alarm) {

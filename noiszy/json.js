@@ -4,47 +4,47 @@ var settings = {
     ],
     "default" : [
       {
-        "url": "http://www.nbcnews.com",
+        "url": "nbcnews.com",
         "checked": "true"
       },
       {
-        "url": "http://www.cbsnews.com",
+        "url": "cbsnews.com",
         "checked": "true"
       },
       {
-        "url": "http://abcnews.go.com",
+        "url": "abcnews.go.com",
         "checked": "true"
       },
       {
-        "url": "http://www.cnn.com",
+        "url": "cnn.com",
         "checked": "true"
       },
       {
-        "url": "http://www.theatlantic.com",
+        "url": "theatlantic.com",
         "checked": "true"
       },
       {
-        "url": "http://www.msnbc.com",
+        "url": "msnbc.com",
         "checked": "true"
       },
       {
-        "url": "http://www.foxnews.com",
+        "url": "foxnews.com",
         "checked": "true"
       },
       {
-        "url": "http://www.theguardian.com",
+        "url": "theguardian.com",
         "checked": "true"
       },
       {
-        "url": "http://www.bbc.com",
+        "url": "bbc.com",
         "checked": "true"
       },
       {
-        "url": "http://www.breitbart.com",
+        "url": "breitbart.com",
         "checked": ""
       },
       {
-        "url": "http://www.shareblue.com",
+        "url": "shareblue.com",
         "checked": ""
       }
     ]

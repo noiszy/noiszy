@@ -28,19 +28,32 @@ h2 {
 #sites_wrapper {
   width: 100%;
   padding: 0px 0px 0px 0px;
+  margin: 10px 0px 10px 0px;
+  border-top-style: solid;
+  border-top-color: #BBBBBB; 
+  border-top-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: #BBBBBB; 
+  border-bottom-width: 1px;
 }
   
 #default_sites_wrapper {
-  width: 50%;
+  width: 35%;
   float: left;
+  padding: 0px 0px 10px 0px;
   margin-top: 0px;
-  padding-top: 10px;
+//  padding-bottom: 10px;
+//  padding-top: 10px;
+  border-right-style: solid;
+  border-right-color: #BBBBBB; 
+  border-right-width: 1px;
 }
   
 #user_sites_wrapper {
-  margin-left: 50%;
+  margin-left: 38%;
   margin-top: 0px;
-  padding-top: 10px;
+  padding: 0px 0px 10px 0px;
+//  padding-top: 10px;
 }
   
 .name {
@@ -69,7 +82,7 @@ h2 {
 }
 
 .outline-box {
-  width: 500px;
+  width: 600px;
 //  height: 800px;
 }
 
@@ -128,23 +141,24 @@ h2 {
     <div id="sites_wrapper">
       <div id="default_sites_wrapper">
         <h2>Default sites to visit:</h2>
-        <div id="default_sites" class="indent"></div>
+        <div id="default_sites"></div>
       </div>
       
       <div id="user_sites_wrapper">
         <h2>User-added sites to visit:</h2>
         <div id="add_site_form_div" class="indent">
-          <input type="text" id="new_site" value="wikipedia.org/wiki/Special:Random">
+          <input type="text" id="new_site" style="width: 250px;" value="wikipedia.org/wiki/Special:Random">
           <button id="add_site_button"> &nbsp; Add &nbsp; </button>
         </div>
-        <div id="user_sites" class="indent"></div>
+        <div id="user_sites"></div>
       </div>
       <div style='clear:both'></div>
       
-      <br>
+<!--      <br>
 
       <button id="save"> &nbsp; Update & save site list &nbsp; </button>
       <div id="status"></div>
+-->
     </div>
 
     <div id="footer_wrapper">
