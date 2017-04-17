@@ -28,7 +28,7 @@ h2 {
 #sites_wrapper {
   width: 100%;
   padding: 0px 0px 0px 0px;
-  margin: 10px 0px 10px 0px;
+  margin: 0px 0px 10px 0px;
   border-top-style: solid;
   border-top-color: #BBBBBB; 
   border-top-width: 1px;
@@ -52,7 +52,7 @@ h2 {
 #user_sites_wrapper {
   margin-left: 38%;
   margin-top: 0px;
-  padding: 0px 0px 10px 0px;
+  padding: 0px 0px 0px 0px;
 //  padding-top: 10px;
 }
   
@@ -107,6 +107,22 @@ h2 {
 .site {
   //
 }
+  
+.full-width-text {
+  width: 100%;
+  font-size: 12px;
+  font-family: Arial, Helvetica, sans-serif;  
+  padding: 10px 0px 10px 0px;
+  margin: 10px 0px 0px 0px;
+  border-top-style: solid;
+  border-top-color: #BBBBBB; 
+  border-top-width: 1px;
+}
+  
+.control-links {
+  font-size: 10px;
+  margin: 6px 0px 6px 0px;
+}
 
 </style>  
   
@@ -125,32 +141,42 @@ h2 {
 
     <div id="status_wrapper">
       <h2>Status:</h2>
-      <div class="indent">
-        <div>
-          <div id="enabled_status" class="box status-box">Loading...</div>
-          <div id="status_buttons">
-            <button id="enable"> &nbsp; Start &nbsp; </button><br>
-            <button id="disable"> &nbsp; Stop &nbsp; </button>
-          </div>
-          <div style='clear:both'></div>
+      <div>
+        <div id="enabled_status" class="box status-box">Loading...</div>
+        <div id="status_buttons">
+          <button id="enable"> &nbsp; Start &nbsp; </button><br>
+          <button id="disable"> &nbsp; Stop &nbsp; </button>
         </div>
+        <div style='clear:both'></div>
       </div>
     </div>
 
-
+    <div id="explanation" class="full-width-text">
+      Noiszy navigates believably-but-randomly around websites, to create a cloud of misleading data associated with your browser.<br>
+      Enable and disable sites in the lists below, then click "Start" above to make some noise.
+    </div>
+    
     <div id="sites_wrapper">
       <div id="default_sites_wrapper">
-        <h2>Default sites to visit:</h2>
+        <h2>Default sites</h2>
         <div id="default_sites"></div>
+        <div id="default_site_controls" class="control-links">
+          <a id="disable_all_default_sites" href="#">Disable all</a>
+          <a id="enable_all_default_sites" href="#">Enable all</a>
+        </div>
       </div>
       
       <div id="user_sites_wrapper">
-        <h2>User-added sites to visit:</h2>
+        <h2>User-added sites</h2>
         <div id="add_site_form_div" class="indent">
           <input type="text" id="new_site" style="width: 250px;" value="wikipedia.org/wiki/Special:Random">
           <button id="add_site_button"> &nbsp; Add &nbsp; </button>
         </div>
         <div id="user_sites"></div>
+        <div id="user_site_controls" class="control-links">
+          <a id="disable_all_user_sites" href="#">Disable all</a>
+          <a id="enable_all_user_sites" href="#">Enable all</a>
+        </div>
       </div>
       <div style='clear:both'></div>
       

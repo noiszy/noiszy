@@ -86,6 +86,34 @@ function enable_script() {
   });
 }
 
+function enable_all_sites() {
+  //get wrapper div
+  var wrapper_div = this.parentNode.parentNode;
+  //get & check checkboxes
+  var inputs = wrapper_div.getElementsByTagName("input");
+  for (var i=0; i<inputs.length; i++) {
+    if (inputs[i].getAttribute("type") == "checkbox") {
+      inputs[i].checked = true;
+    }
+  }
+  // and save everything
+  save_options();
+}
+
+function disable_all_sites() {
+  //get wrapper div
+  var wrapper_div = this.parentNode.parentNode;
+  //get & check checkboxes
+  var inputs = wrapper_div.getElementsByTagName("input");
+  for (var i=0; i<inputs.length; i++) {
+    if (inputs[i].getAttribute("type") == "checkbox") {
+      inputs[i].checked = false;
+    }
+  }
+  // and save everything
+  save_options();
+}
+
 
 function add_user_site() {
   console.log("adding site");
@@ -324,5 +352,9 @@ document.getElementById('enable').addEventListener('click',
     enable_script);
 document.getElementById('add_site_button').addEventListener('click',
     add_user_site);
+document.getElementById('disable_all_default_sites').addEventListener('click', disable_all_sites);
+document.getElementById('enable_all_default_sites').addEventListener('click', enable_all_sites);
+document.getElementById('disable_all_user_sites').addEventListener('click', disable_all_sites);
+document.getElementById('enable_all_user_sites').addEventListener('click', enable_all_sites);
 document.getElementById('reset_button').addEventListener('click',
     reset_options);
