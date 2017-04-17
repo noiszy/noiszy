@@ -38,7 +38,7 @@ h2 {
 }
   
 #default_sites_wrapper {
-  width: 35%;
+  width: 30%;
   float: left;
   padding: 0px 0px 10px 0px;
   margin-top: 0px;
@@ -50,10 +50,24 @@ h2 {
 }
   
 #user_sites_wrapper {
-  margin-left: 38%;
-  margin-top: 0px;
-  padding: 0px 0px 0px 0px;
+  float: left;
+  width: 65%;
+//  margin-left: 38%;
+//  margin-top: 0px;
+  padding: 0px 0px 0px 10px;
+  margin: 0px 0px 0px 10px
 //  padding-top: 10px;
+  border-left-style: solid;
+  border-left-color: #BBBBBB; 
+  border-left-width: 1px;
+}
+
+.site_group_spacer {
+  float: left;
+  border-left-style: solid;
+  border-left-color: #BBBBBB; 
+  border-left-width: 1px;
+  padding: 0px 10px 0px 10px;
 }
   
 .name {
@@ -119,6 +133,16 @@ h2 {
   border-top-width: 1px;
 }
   
+.var_width_text {
+  font-size: 12px;
+  font-family: Arial, Helvetica, sans-serif;  
+  padding: 10px 0px 0px 0px;
+//  margin: 10px 0px 0px 0px;
+//  border-top-style: solid;
+//  border-top-color: #BBBBBB; 
+//  border-top-width: 1px;
+}
+  
 .control-links {
   font-size: 10px;
   margin: 6px 0px 6px 0px;
@@ -152,8 +176,8 @@ h2 {
     </div>
 
     <div id="explanation" class="full-width-text">
-      Noiszy navigates believably-but-randomly around websites, to create a cloud of misleading data associated with your browser.<br>
-      Enable and disable sites in the lists below, then click "Start" above to make some noise.
+      Noiszy <a href="https://noiszy.com/noiszys-algorithm/">navigates believably-but-randomly</a> around websites, to create a cloud of misleading data associated with your browser.<br>
+      Enable, disable, and customize sites below, then click <a href="#" id="start_link">"Start"</a> to make some noise.
     </div>
     
     <div id="sites_wrapper">
@@ -167,10 +191,16 @@ h2 {
       </div>
       
       <div id="user_sites_wrapper">
+        <div class="var_width_text">
+          Unpredictable behavior can be described here, where we should list a disclaimer about whatever yadda yadda.
+        </div>
         <h2>User-added sites</h2>
         <div id="add_site_form_div" class="indent">
-          <input type="text" id="new_site" style="width: 250px;" value="wikipedia.org/wiki/Special:Random">
-          <button id="add_site_button"> &nbsp; Add &nbsp; </button>
+          <form id="add_site_form" action="#">
+            <input type="text" id="new_site" style="width: 250px;" value="wikipedia.org/wiki/Special:Random">
+<!--            <button id="add_site_button"> &nbsp; Add &nbsp; </button>-->
+            <button type="submit"> &nbsp; Add &nbsp; </button>
+          </form>
         </div>
         <div id="user_sites"></div>
         <div id="user_site_controls" class="control-links">

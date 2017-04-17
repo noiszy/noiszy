@@ -115,7 +115,8 @@ function disable_all_sites() {
 }
 
 
-function add_user_site() {
+function add_user_site(event) {
+  event.preventDefault();
   console.log("adding site");
   
   //get value from HTML
@@ -350,7 +351,11 @@ document.getElementById('disable').addEventListener('click',
     disable_script);
 document.getElementById('enable').addEventListener('click',
     enable_script);
-document.getElementById('add_site_button').addEventListener('click',
+document.getElementById('start_link').addEventListener('click',
+    enable_script);
+//document.getElementById('add_site_button').addEventListener('click',
+//    add_user_site);
+document.getElementById('add_site_form').addEventListener('submit',
     add_user_site);
 document.getElementById('disable_all_default_sites').addEventListener('click', disable_all_sites);
 document.getElementById('enable_all_default_sites').addEventListener('click', enable_all_sites);
