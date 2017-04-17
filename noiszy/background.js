@@ -28,9 +28,7 @@ function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-
-function open_new_site() {
-  
+function get_enabled_sites(callback) {
   chrome.storage.local.get({
     sites: []
   }, function (result) {
@@ -38,11 +36,6 @@ function open_new_site() {
     // build array of sites
     var sites = [];
     
-    console.log("result",result);
-    console.log("result.sites",result.sites);
-    console.log("result.sites.length",result.sites.length);
-    
-
     // should do this in a loop instead - fix this
 /*    for (var j=0; j<result.sites.length; j++) {
       console.log("j",j,result.sites[j]);
@@ -69,10 +62,49 @@ function open_new_site() {
         sites.push(sites_user[i].url);
       }
     }
+    
+    callback(sites);
+  });
+//  return false;
+}
 
+function open_new_site() {
+  
+  get_enabled_sites(function(result) {
+  
+/*  chrome.storage.local.get({
+    sites: []
+  }, function (result) {
 
-    console.log("sites",sites);
+    // build array of sites
+    var sites = [];
+    
+    console.log("result",result);
+    console.log("result.sites",result.sites);
+    console.log("result.sites.length",result.sites.length);
+    
+    var sites_default = result.sites.default;
+    for (var i=0; i < sites_default.length; i++) {
+      if (sites_default[i].checked) {
+//        sites[i] = sites_default[i].url;
+        sites.push(sites_default[i].url);
+      }
+    }
+    var offset = sites_default.length;
+    var sites_user = result.sites.user;
+    for (var i=0; i < sites_user.length; i++) {
+      if (sites_user[i].checked) {
+//        sites[i+offset] = sites_user[i].url;
+        sites.push(sites_user[i].url);
+      }
+    }
 
+*/
+    var sites = result;
+
+    console.log("in open_new_site - sites",sites);
+
+    
     var num = getRandomIntInclusive(0,sites.length-1);
     console.log(num);
     
@@ -201,35 +233,53 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 //    } else if (request.msg == "start") {
   if (request.msg == "start") {
     console.log("starting!");
-    //get current tab
-    chrome.tabs.query({active: true, currentWindow: true}, function(arrayOfTabs) {
-      // since only one tab should be active and in the current window at once
-      // the return variable should only have one entry
-      var activeTab = arrayOfTabs[0];
-      var activeTabId = activeTab.id; // or do whatever you need
-      console.log("arrayOfTabs[0]",arrayOfTabs[0]);
-      console.log("storing tab id: " + arrayOfTabs[0].id);
-      // store the tab id
-      chrome.storage.local.set({tabId: arrayOfTabs[0].id}, function() {});
-      console.log("stored");
+    
+//    var r = "";
+    
+    //first confirm that there are enabled sites
+    get_enabled_sites(function(result) {
+      if (result && result.length > 0) {
+        //get current tab
+        chrome.tabs.query({active: true, currentWindow: true}, function(arrayOfTabs) {
+          // since only one tab should be active and in the current window at once
+          // the return variable should only have one entry
+          var activeTab = arrayOfTabs[0];
+          var activeTabId = activeTab.id; // or do whatever you need
+          console.log("arrayOfTabs[0]",arrayOfTabs[0]);
+          console.log("storing tab id: " + arrayOfTabs[0].id);
+          // store the tab id
+          chrome.storage.local.set({tabId: arrayOfTabs[0].id}, function() {});
+          console.log("stored");
 
-      // open new site
-      open_new_site();
-    });
+          // open new site
+          open_new_site();
+//          r = "open_new_site called";
+          sendResponse({farewell: "open_new_site called"});
+        });
 
-    // create alarm so link will be clicked
-    chrome.storage.local.get('baseInterval', function(result){
-      // mult x random 2x, so results skew lower
-      var interval = result.baseInterval + (Math.random() * Math.random() * result.baseInterval);
-      chrome.alarms.create("linkClick",{delayInMinutes: interval});
-      sendResponse({farewell: "open_new_site called"});
+        // create alarm so link will be clicked
+        chrome.storage.local.get('baseInterval', function(result){
+          // mult x random 2x, so results skew lower
+          var interval = result.baseInterval + (Math.random() * Math.random() * result.baseInterval);
+          chrome.alarms.create("linkClick",{delayInMinutes: interval});
+//          sendResponse({farewell: "open_new_site called"});
+        });
+      } else { //no enabled sites
+        //for now...
+        console.log("no enabled sites");
+//        r = "no enabled sites";
+        sendResponse({farewell: "no enabled sites"});
+      }
     });
 
   } else if (request.msg == "reset") {
     initialize_noiszy(function(){});
+//    r = "reset called";
     sendResponse({farewell: "reset called"});
   }
   // we're done
+//  sendResponse({farewell: r});
+  return true;
 });
 
 

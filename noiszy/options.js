@@ -9,6 +9,14 @@ _gaq.push(['_trackPageview']);
 })();
 
 
+function status_alert(message, time) {
+  var status = document.getElementById('alerts');
+    status.textContent = message;
+    setTimeout(function() {
+      status.textContent = '';
+    }, time);
+}
+
 // Saves options to chrome.storage
 function save_options() {
 
@@ -74,15 +82,29 @@ function disable_script() {
 }
 
 function enable_script() {
-  console.log("enabled");
-  chrome.storage.local.set({enabled: "Running"}, function () {
-    console.log("running");
-    document.getElementById('enabled_status').textContent = "Running";
+  console.log("enabling");
   // send message to background
   //  chrome.runtime.sendMessage({msg: "enable"}, function(response) {
-    chrome.runtime.sendMessage({msg: "start"}, function(response) {
+  chrome.runtime.sendMessage({msg: "start"}, function(response) {
+    console.log("response", response);
+    if (response.farewell == "no enabled sites") {
+      // no enabled sites
+      console.log("no enabled sites");
+      // show an alert
+      status_alert("You must enable at least one site.", 10000);
+      // clean up, so alarms get cleared etc
+      disable_script();
+//    } else if (response.farewell == "open_new_site called") {
+    } else {
+      console.log("response", response);
+      // it worked
+      chrome.storage.local.set({enabled: "Running"}, function () {
+        console.log("running");
+        document.getElementById('enabled_status').textContent = "Running";
 //      console.log(response.farewell);
-    });
+      
+      });
+    }
   });
 }
 
@@ -132,7 +154,8 @@ function add_user_site(event) {
     if (blacklist.test(new_site)) {
       //alert & cancel
       //add this to a status div, and remove after 3 secs
-      console.log("We're sorry, that site cannot be added to Noiszy.");
+      console.log("That site cannot be added to Noiszy.");
+      status_alert("That site cannot be added to Noiszy.",5000);
       return false;
     }
   } catch(e) {
@@ -166,6 +189,9 @@ function add_user_site(event) {
       sites: items.sites
     }, function() {
       console.log("added it");
+
+      //track it
+      _gaq.push(["_trackEvent", "add site", new_site]);
       
       chrome.storage.local.get({
         enabled: 'Ready',
@@ -180,6 +206,10 @@ function add_user_site(event) {
       });
     });
   });
+  
+  // empty the text box
+  document.getElementById("new_site").value = "";
+
   return false;
 }
 
