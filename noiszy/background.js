@@ -1,4 +1,15 @@
-var _gaq = _gaq || [];
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-96120302-2', 'auto');
+ga('set', 'checkProtocolTask', function(){}); // Removes failing protocol check. @see: http://stackoverflow.com/a/22152353/1958200
+ga('set', 'forceSSL', true);
+// suppress pageview.  We're only tracking options views & plugin clicks.
+//ga('send', 'pageview');
+
+/*var _gaq = _gaq || [];
 _gaq.push(['_setAccount', 'UA-96120302-2']);
 // suppress pageview.  We're only tracking options views & plugin clicks.
 //_gaq.push(['_trackPageview']);
@@ -8,12 +19,13 @@ _gaq.push(['_setAccount', 'UA-96120302-2']);
   ga.src = 'https://ssl.google-analytics.com/ga.js';
   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 })();
-
+*/
 
 
 function track_clicked_link(link) {
     console.log('tracking this link:\n' + link);
-    _gaq.push(['_trackPageview',link]);
+//    _gaq.push(['_trackPageview',link]);
+    ga('send','pageview',link);
 }
 
 
@@ -126,8 +138,8 @@ function open_new_site() {
       });
 
       // GA tracking
-//       _gaq.push(['_trackPageview', sites[num]]);
-       _gaq.push(['_trackPageview', new_url]);
+//       _gaq.push(['_trackPageview', new_url]);
+      ga('send','pageview',new_url);
 
     });
   });
@@ -272,6 +284,12 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
       }
     });
 
+  } else if (request.msg == "track add site") {
+    console.log("request", request);
+    ga('send','event','add site',request.added);
+  } else if (request.msg == "track options open") {
+    console.log("request", request);
+    ga('send','pageview','options.html');
   } else if (request.msg == "reset") {
     initialize_noiszy(function(){});
 //    r = "reset called";

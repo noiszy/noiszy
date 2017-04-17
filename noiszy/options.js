@@ -1,16 +1,13 @@
-var _gaq = _gaq || [];
-_gaq.push(['_setAccount', 'UA-96120302-2']);
-_gaq.push(['_trackPageview']);
-
-(function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = 'https://ssl.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-})();
+//track page open
+chrome.runtime.sendMessage({
+  msg: "track options open"
+}, function(response) {
+  console.log("response", response);
+});
 
 
-function status_alert(message, time) {
-  var status = document.getElementById('alerts');
+function status_alert(divId, message, time) {
+  var status = document.getElementById(divId);
     status.textContent = message;
     setTimeout(function() {
       status.textContent = '';
@@ -91,7 +88,7 @@ function enable_script() {
       // no enabled sites
       console.log("no enabled sites");
       // show an alert
-      status_alert("You must enable at least one site.", 10000);
+      status_alert("alerts", "You must enable at least one site.", 10000);
       // clean up, so alarms get cleared etc
       disable_script();
 //    } else if (response.farewell == "open_new_site called") {
@@ -153,9 +150,10 @@ function add_user_site(event) {
   try {
     if (blacklist.test(new_site)) {
       //alert & cancel
-      //add this to a status div, and remove after 3 secs
-      console.log("That site cannot be added to Noiszy.");
-      status_alert("That site cannot be added to Noiszy.",5000);
+      status_alert("user_site_alerts","Sorry, that site cannot be added to Noiszy.",5000);
+      //clear the entry
+      document.getElementById("new_site").value = "";
+      
       return false;
     }
   } catch(e) {
@@ -191,7 +189,13 @@ function add_user_site(event) {
       console.log("added it");
 
       //track it
-      _gaq.push(["_trackEvent", "add site", new_site]);
+      chrome.runtime.sendMessage({
+        msg: "track add site",
+        added: new_site
+      }, function(response) {
+        console.log("response", response);
+      });
+
       
       chrome.storage.local.get({
         enabled: 'Ready',

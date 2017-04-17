@@ -148,8 +148,10 @@ h2 {
   margin: 6px 0px 6px 0px;
 }
   
-#alerts {
+.alerts {
   background-color: bisque;
+  paddding: 4px 4px 4px 4px;
+  margin: 4px 0px 4px 0px;
 }
 
 </style>  
@@ -175,7 +177,7 @@ h2 {
           <button id="enable"> &nbsp; Start &nbsp; </button><br>
           <button id="disable"> &nbsp; Stop &nbsp; </button>
         </div>
-        <div id="alerts"></div>
+        <div id="alerts" class="alerts"></div>
         <div style='clear:both'></div>
       </div>
     </div>
@@ -200,6 +202,7 @@ h2 {
           Unpredictable behavior can be described here, where we should list a disclaimer about whatever yadda yadda.
         </div>
         <h2>User-added sites</h2>
+        <div id="user_site_alerts" class="alerts"></div>
         <div id="add_site_form_div" class="indent">
           <form id="add_site_form" action="#">
             <input type="text" id="new_site" style="width: 250px;" value="wikipedia.org/wiki/Special:Random">
