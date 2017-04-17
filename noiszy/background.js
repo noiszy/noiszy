@@ -17,6 +17,11 @@ function track_clicked_link(link) {
 }
 
 
+function isDevMode() {
+    return !('update_url' in chrome.runtime.getManifest());
+}
+
+
 function getRandomIntInclusive(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -162,13 +167,20 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
             // the '4' should be controlled in a setting, but use this for now
             // should also randomize the amount of time between pvs eventually
 
-            var rand = getRandomIntInclusive(0,4);
-            console.log("rand alarm int: ", rand);
-            if (rand == 0) { // 1/4 of the time
-              chrome.alarms.create("newSite",{delayInMinutes: 0.3});
-            } else {
-              chrome.alarms.create("linkClick",{delayInMinutes: 0.3});
-            }
+            // create alarm so link will be clicked
+            chrome.storage.local.get('baseInterval', function(result){
+              // mult x random 2x, so results skew lower
+              var interval = result.baseInterval + (Math.random() * Math.random() * result.baseInterval);
+              
+              var rand = getRandomIntInclusive(0,4);
+              console.log("rand alarm int: ", rand);
+              if (rand == 0) { // 1/4 of the time
+                chrome.alarms.create("newSite",{delayInMinutes: interval});
+              } else {
+                chrome.alarms.create("linkClick",{delayInMinutes: interval});
+              }
+            });
+
           }
         });
       });
@@ -206,8 +218,12 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
     });
 
     // create alarm so link will be clicked
-    chrome.alarms.create("linkClick",{delayInMinutes: 0.3});
-    sendResponse({farewell: "open_new_site called"});
+    chrome.storage.local.get('baseInterval', function(result){
+      // mult x random 2x, so results skew lower
+      var interval = result.baseInterval + (Math.random() * Math.random() * result.baseInterval);
+      chrome.alarms.create("linkClick",{delayInMinutes: interval});
+      sendResponse({farewell: "open_new_site called"});
+    });
 
   } else if (request.msg == "reset") {
     initialize_noiszy(function(){});
@@ -225,8 +241,7 @@ function initialize_noiszy(callbackFunction) {
   var sites = settings.sites;
   console.log("settings sites",sites);
   
-  // when upgrading, we should check for existing values in storage
-  // but make that optional
+  // when upgrading, we should check for existing values in storage...
 /*  chrome.storage.local.get({
     enabled: 'Ready',
     sites: 'sites'
@@ -238,20 +253,26 @@ function initialize_noiszy(callbackFunction) {
   });
 */
 
+  // in dev mode, load links more quickly
+  var base_interval = isDevMode() ? 0.2 : 1;
   
 //  chrome.storage.local.set({sites: sites}, function () {
   chrome.storage.local.set({
+    enabled: "Waiting",
+    baseInterval: base_interval,
     sites: sites
   }, function () {
       chrome.storage.local.get('sites', function (result) {
+          console.log(result.enabled)
           console.log(result.sites)
       });
   });
-  chrome.storage.local.set({enabled: "Waiting"}, function () {
+/*  chrome.storage.local.set({enabled: "Waiting"}, function () {
       chrome.storage.local.get('enabled', function (result) {
           console.log(result.enabled)
       });
   });
+*/
 
   callbackFunction();
 }
