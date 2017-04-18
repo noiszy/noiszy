@@ -44,7 +44,12 @@ function save_options() {
     sites_formatted.user[i].checked = user_site_list[i].checked;
   }
 
+  //also check how to handle streams
+  var block_streams = document.getElementById("block_streams").checked;
+
+  
   chrome.storage.local.set({
+    blockStreams: block_streams,
     sites: sites_formatted
   }, function() {
     // Update status to let user know options were saved.
@@ -395,5 +400,7 @@ document.getElementById('disable_all_default_sites').addEventListener('click', d
 document.getElementById('enable_all_default_sites').addEventListener('click', enable_all_sites);
 document.getElementById('disable_all_user_sites').addEventListener('click', disable_all_sites);
 document.getElementById('enable_all_user_sites').addEventListener('click', enable_all_sites);
+document.getElementById('block_streams').addEventListener('click',
+    save_options);
 document.getElementById('reset_button').addEventListener('click',
     reset_options);

@@ -23,7 +23,7 @@ _gaq.push(['_setAccount', 'UA-96120302-2']);
 
 
 function track_clicked_link(link) {
-    console.log('tracking this link:\n' + link);
+    console.log('tracking this link:\n',link);
 //    _gaq.push(['_trackPageview',link]);
     ga('send','pageview',link);
 }
@@ -182,7 +182,10 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
 
     if (enabled == "Enabled" || enabled == "Running") {
     
-      chrome.storage.local.get('tabId', function (result) {
+      chrome.storage.local.get({
+        'tabId': [],
+        'blockStreams': []
+      }, function (result) {
         
         console.log(result.tabId);
         
@@ -202,7 +205,36 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
               //update the format here
               
               console.log("inside linkClick");
-              chrome.tabs.sendMessage(result.tabId, {text: 'clicked_link'}, track_clicked_link);
+//              chrome.tabs.sendMessage(result.tabId, {text: 'clicked_link'}, track_clicked_link);
+              
+              
+              
+              
+              
+              chrome.tabs.sendMessage(result.tabId, {
+                text: 'clicked_link',
+                blockStreams: result.blockStreams
+              }, function(response) {
+                console.log("response received");
+                console.log("in alarm tabs.sendMessage callback, response:",response);
+
+                console.log('tracking this link:',response);
+//                  ga('send','pageview',response.url);
+                  ga('send','pageview',response);
+
+//                  track_clicked_link(result);
+//                  sendResponse();
+                console.log("tracked");
+                
+                
+                
+//                return true;
+              });
+              
+              
+              
+              
+              
               console.log("sent clicked_link");
             }
 
@@ -290,6 +322,8 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
   } else if (request.msg == "track options open") {
     console.log("request", request);
     ga('send','pageview','options.html');
+  } else if (request.msg == "track link click") {
+    ga('send','pageview',request.url);
   } else if (request.msg == "reset") {
     initialize_noiszy(function(){});
 //    r = "reset called";
