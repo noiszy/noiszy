@@ -304,45 +304,86 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 function initialize_noiszy(callbackFunction) {
   console.log("initializing");
   console.log("settings",settings);
-    
-  // copy default from settings into local storage
-  var sites = settings.sites;
-  console.log("settings sites",sites);
-  
-  // when upgrading, we should check for existing values in storage...
-/*  chrome.storage.local.get({
-    enabled: 'Ready',
-    sites: 'sites'
-  }, function(items) {    
-    console.log("enabled: ",items.enabled);
-    console.log("sites: ",items.sites);
-//    var storage_sites = items.sites;
-    sites = items.sites;
-  });
-*/
 
   // in dev mode, load links more quickly
   var base_interval = isDevMode() ? 0.2 : 1;
-  
-//  chrome.storage.local.set({sites: sites}, function () {
-  chrome.storage.local.set({
-    enabled: "Waiting",
-    baseInterval: base_interval,
-    sites: sites
-  }, function () {
-      chrome.storage.local.get('sites', function (result) {
-          console.log(result.enabled)
-          console.log(result.sites)
-      });
-  });
-/*  chrome.storage.local.set({enabled: "Waiting"}, function () {
-      chrome.storage.local.get('enabled', function (result) {
-          console.log(result.enabled)
-      });
-  });
-*/
+      
+  // load settings from local storage into a different variable
+  chrome.storage.local.get({
+    sites: 'stored_sites'
+  }, function(result) {
 
-  callbackFunction();
+    // copy default from settings into local storage
+    var sites = settings.sites;
+    console.log("settings sites",sites);
+
+    console.log("got existing storage");
+    console.log("result: ",result);
+    
+    // when upgrading, we should check for existing values in storage
+    // and update what's in settings to match
+
+    // default sites first
+    try {
+      if (result.sites.default) { 
+        var stored_sites = result.sites.default;
+        //cycle through
+        for (var i=0; i<stored_sites.length; i++) {
+          console.log("i",i);
+          
+          // for each stored site, see whether we need to 
+          // update anything in settings
+          for (var j=0; j<sites.default.length; j++) {
+            console.log("j",j);
+            //if stored_sites[i] is in sites[j]
+            console.log("sites.default[j].url",sites.default[j].url);
+            console.log("stored_sites[i].url",stored_sites[i].url);
+            if (sites.default[j].url.indexOf(stored_sites[i].url) > -1) {
+              //then update sites[j] with checked value from sites[i]
+              console.log("match!");
+              sites.default[j].checked = stored_sites[i].checked;
+            }
+          }
+        }
+      }
+    } catch(e) {}
+    
+    // user sites too
+    try {
+      if (result.sites.user) { 
+        // then just copy result.sites.user over to sites.user
+        
+        sites.user = result.sites.user;
+        console.log("copied user sites");
+        console.log("sites",sites);
+      }
+    } catch(e) {}
+
+    // now sites has current values
+    // set values in local storage
+    console.log("base_interval", base_interval);
+    console.log("sites", sites);
+    
+    //now finally, set values.
+    chrome.storage.local.set({
+      enabled: "Waiting",
+      baseInterval: base_interval,
+      sites: sites
+    }, function (result) {
+      //check to make sure it worked
+      chrome.storage.local.get({
+        'sites': [],
+        'enabled': [],
+        'baseInterval': []
+      }, function (result) {
+        console.log("result", result);
+        console.log("result.enabled", result.enabled);
+        console.log("result.sites", result.sites);
+
+        callbackFunction();
+      });
+    });
+  });
 }
 
 initialize_noiszy(function(){});
