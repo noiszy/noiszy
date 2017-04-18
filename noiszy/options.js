@@ -376,6 +376,7 @@ function restore_options() {
 function reset_options() {  
   chrome.runtime.sendMessage({msg: "reset"}, function(response) {
 //      console.log(response.farewell);
+    //do not restore options
     restore_options();
   });
 }

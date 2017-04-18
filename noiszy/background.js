@@ -325,7 +325,7 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
   } else if (request.msg == "track link click") {
     ga('send','pageview',request.url);
   } else if (request.msg == "reset") {
-    initialize_noiszy(function(){});
+    initialize_noiszy(false, function(){});
 //    r = "reset called";
     sendResponse({farewell: "reset called"});
   }
@@ -335,9 +335,10 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 });
 
 
-function initialize_noiszy(callbackFunction) {
+function initialize_noiszy(preserve_preferences, callbackFunction) {
   console.log("initializing");
   console.log("settings",settings);
+  console.log("preserve_preferences",preserve_preferences);
 
   // in dev mode, load links more quickly
   var base_interval = isDevMode() ? 0.2 : 1;
@@ -348,61 +349,68 @@ function initialize_noiszy(callbackFunction) {
   }, function(result) {
 
     // copy default from settings into local storage
-    var sites = settings.sites;
-    console.log("settings sites",sites);
+    console.log("settings",settings);
+    var new_sites = settings.sites;
+    console.log("settings sites",new_sites);
 
     console.log("got existing storage");
     console.log("result: ",result);
     
-    // when upgrading, we should check for existing values in storage
-    // and update what's in settings to match
+    if (preserve_preferences) { //if true
+      console.log("preserving preferences");
+      // when upgrading, we should check for existing values in storage
+      // and update what's in settings to match
+      // default sites first
+      try {
+        if (result.sites.default) { 
+          var stored_sites = result.sites.default;
+          //cycle through
+          for (var i=0; i<stored_sites.length; i++) {
+//            console.log("i",i);
 
-    // default sites first
-    try {
-      if (result.sites.default) { 
-        var stored_sites = result.sites.default;
-        //cycle through
-        for (var i=0; i<stored_sites.length; i++) {
-          console.log("i",i);
-          
-          // for each stored site, see whether we need to 
-          // update anything in settings
-          for (var j=0; j<sites.default.length; j++) {
-            console.log("j",j);
-            //if stored_sites[i] is in sites[j]
-            console.log("sites.default[j].url",sites.default[j].url);
-            console.log("stored_sites[i].url",stored_sites[i].url);
-            if (sites.default[j].url.indexOf(stored_sites[i].url) > -1) {
-              //then update sites[j] with checked value from sites[i]
-              console.log("match!");
-              sites.default[j].checked = stored_sites[i].checked;
+            // for each stored site, see whether we need to 
+            // update anything in settings
+            for (var j=0; j<sites.default.length; j++) {
+//              console.log("j",j);
+              //if stored_sites[i] is in sites[j]
+//              console.log("sites.default[j].url",sites.default[j].url);
+//              console.log("stored_sites[i].url",stored_sites[i].url);
+//              if (sites.default[j].url.indexOf(stored_sites[i].url) > -1) {
+              
+              //XXXXXX
+              //this should be the other way around.  stored URLs may be longer.
+              if (new_sites.default[j].url.indexOf(stored_sites[i].url) > -1) {
+                //then update sites[j] with checked value from sites[i]
+//                console.log("match!");
+                new_sites.default[j].checked = stored_sites[i].checked;
+              }
             }
           }
         }
-      }
-    } catch(e) {}
-    
-    // user sites too
-    try {
-      if (result.sites.user) { 
-        // then just copy result.sites.user over to sites.user
-        
-        sites.user = result.sites.user;
-        console.log("copied user sites");
-        console.log("sites",sites);
-      }
-    } catch(e) {}
+      } catch(e) {}
+
+      // user sites too
+      try {
+        if (result.sites.user) { 
+          // then just copy result.sites.user over to sites.user
+
+          new_sites.user = result.sites.user;
+          console.log("copied user sites");
+          console.log("sites",sites);
+        }
+      } catch(e) {}
+    }
 
     // now sites has current values
     // set values in local storage
     console.log("base_interval", base_interval);
-    console.log("sites", sites);
+    console.log("new_sites", new_sites);
     
     //now finally, set values.
     chrome.storage.local.set({
       enabled: "Waiting",
       baseInterval: base_interval,
-      sites: sites
+      sites: new_sites
     }, function (result) {
       //check to make sure it worked
       chrome.storage.local.get({
@@ -420,4 +428,4 @@ function initialize_noiszy(callbackFunction) {
   });
 }
 
-initialize_noiszy(function(){});
+initialize_noiszy(true, function(){});
