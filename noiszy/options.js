@@ -149,7 +149,7 @@ function add_user_site(event) {
   //check for real URL, & reject or modify if needed
   try {
     //test to see if it's a valid http/https URL
-    if (/((https\:\/\/)?[-a-z0-9]+(\.[-a-z0-9]{2,}){1,2}($|\s|\/.*))/i.test(new_site)) {
+    if (/((https\:\/\/)?[-a-z0-9]+(\.[-a-z0-9]{2,}){1,4}($|\s|\/.*))/i.test(new_site)) {
       // matches, so modify to remove http:// if it's there
       new_site = new_site.match(/((https\:\/\/)?[-a-z0-9]+(\.[-a-z0-9]{2,}){1,2}($|\s|\/.*))/i)[1];
     } else {
@@ -226,15 +226,18 @@ function add_user_site(event) {
 function remove_site() {
 
   // get url to remove
-  console.log("parent",this.parentNode);
   var url_to_remove = this.parentNode.getAttribute("data-val");
+
+  //remove from page
+//  console.log("this",this);
+  this.parentNode.parentNode.removeChild(this.parentNode);
 
   // get current values
   chrome.storage.local.get({
     sites: 'sites'
   }, function(items) {
     
-    console.log("sites: ",items.sites);
+//    console.log("sites: ",items.sites);
     // find site to remove - must be in sites.user (for now)
     
     // remove
@@ -250,9 +253,6 @@ function remove_site() {
     chrome.storage.local.set({
       sites: items.sites
     }, function() {
-      //remove from page
-      this.parentNode.parentNode.removeChild(this.parentNode);
-      console.log("removed it");
     });
   });    
 }
@@ -366,6 +366,19 @@ function reset_options() {
   });
 }
 
+
+document.addEventListener('DOMContentLoaded', function () {
+    var links = document.getElementsByTagName("a");
+    for (var i = 0; i < links.length; i++) {
+        (function () {
+            var ln = links[i];
+            var location = ln.href;
+            ln.onclick = function () {
+                chrome.tabs.create({active: true, url: location});
+            };
+        })();
+    }
+});
 
 document.addEventListener('DOMContentLoaded', 
     restore_options);

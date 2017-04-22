@@ -18,12 +18,12 @@ div {
 button {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: normal;
   margin: 0px 0px 6px 0px;
 }
 
-button.non-bold {
-  font-weight: normal;
+.bold {
+  font-weight: bold;
 }
   
 h2 {
@@ -181,7 +181,7 @@ h2 {
 
     <div id="explanation" class="full-width-text section">
       Noiszy <a href="https://noiszy.com/noiszys-algorithm/">navigates pseudo-randomly</a> around websites, to create a cloud of meaningless and misleading data.
-      Enable, disable, and customize sites below, then click <a href="#" id="start_link">"Start"</a> to make some noise.
+      Enable, disable, and customize sites below, then click "<a href="#" id="start_link">Start</a>" to make some noise.
     </div>
     
     <div id="status_wrapper" class="section top-bottom-padding">
@@ -189,7 +189,7 @@ h2 {
       <div>
         <div id="enabled_status" class="box status-box">Loading...</div>
         <div id="status_buttons">
-          <button id="enable"> &nbsp; Start &nbsp; </button><br>
+          <button id="enable" class="bold"> &nbsp; Start &nbsp; </button><br>
           <button id="disable"> &nbsp; Stop &nbsp; </button>
         </div>
         <div id="alerts" class="alerts"></div>
@@ -218,14 +218,14 @@ h2 {
       
       <div id="user_sites_wrapper">
         <div class="var_width_text">
-          Noiszy can cause unexpected results. Noiszy's algorithm may click a "Buy Now" button or disrupt a useful recommendation engine. Noiszy can't be held liable for the links it clicks, so add sites thoughtfully.  <a href="https://noiszy.com/privacy/">Learn more</a>
+          Noiszy can cause unexpected results. Noiszy's algorithm may disrupt a useful recommendation engine or click a "Buy Now" button. Noiszy can't be held liable for the links it clicks, so add sites thoughtfully.  <a href="https://noiszy.com/choosing-sites/">Learn more</a>
         </div>
         <h2>User-added sites</h2>
         <div id="user_site_alerts" class="alerts"></div>
         <div id="add_site_form_div" class="indent">
           <form id="add_site_form" action="#">
             <input type="text" id="new_site" style="width: 250px;" value="wikipedia.org/wiki/Special:Random">
-            <button type="submit" class="non-bold"> &nbsp; Add &nbsp; </button>
+            <button type="submit"> &nbsp; Add &nbsp; </button>
           </form>
         </div>
         <div id="user_sites"></div>

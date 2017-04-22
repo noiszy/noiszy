@@ -1,7 +1,7 @@
 {
   "name": "Noiszy",
   "description": "They're listening. Make some noise.",
-  "version": "1.4",
+  "version": "2.0",
   "permissions": [
     "alarms",
     "activeTab",

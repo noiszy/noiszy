@@ -28,11 +28,11 @@ var presets = {
         "checked": "true"
       },
       {
-        "url": "chinadaily.com.cn",
+        "url": "chron.com",
         "checked": "true"
       },
       {
-        "url": "chron.com",
+        "url": "cnbc.com",
         "checked": "true"
       },
       {
@@ -64,7 +64,15 @@ var presets = {
         "checked": "true"
       },
       {
+        "url": "money.cnn.com",
+        "checked": "true"
+      },
+      {
         "url": "msnbc.com",
+        "checked": "true"
+      },
+      {
+        "url": "nationalgeographic.com",
         "checked": "true"
       },
       {

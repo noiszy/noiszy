@@ -127,7 +127,7 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
               //click a link on the page, using a content script
 //              console.log("inside linkClick");
               chrome.tabs.sendMessage(result.tabId, {
-                text: 'clicked_link',
+                text: 'click link',
                 blockStreams: result.blockStreams
               }, function(response) {
 //                console.log("in alarm tabs.sendMessage callback, response:",response);
