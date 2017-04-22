@@ -4,9 +4,10 @@
   <title>Noiszy Options</title>
 <style>
 body {
-    background-color: white;
-    font-family: Arial, Helvetica, sans-serif;
-//    margin-left: 20px;
+  background-color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  min-width: 500px;
+  min-height: 500px;
 }
   
 div {
@@ -32,9 +33,9 @@ h2 {
   border-top-style: solid;
   border-top-color: #BBBBBB; 
   border-top-width: 1px;
-  border-bottom-style: solid;
-  border-bottom-color: #BBBBBB; 
-  border-bottom-width: 1px;
+//  border-bottom-style: solid;
+//  border-bottom-color: #BBBBBB; 
+//  border-bottom-width: 1px;
 }
   
 #default_sites_wrapper {
@@ -42,8 +43,6 @@ h2 {
   float: left;
   padding: 0px 0px 10px 0px;
   margin-top: 0px;
-//  padding-bottom: 10px;
-//  padding-top: 10px;
   border-right-style: solid;
   border-right-color: #BBBBBB; 
   border-right-width: 1px;
@@ -52,11 +51,8 @@ h2 {
 #user_sites_wrapper {
   float: left;
   width: 65%;
-//  margin-left: 38%;
-//  margin-top: 0px;
   padding: 0px 0px 0px 10px;
   margin: 0px 0px 0px 10px
-//  padding-top: 10px;
   border-left-style: solid;
   border-left-color: #BBBBBB; 
   border-left-width: 1px;
@@ -97,17 +93,20 @@ h2 {
 
 .outline-box {
   width: 600px;
-//  height: 800px;
 }
 
 .status-box {
   width: 90px;
   padding: 16px;
-  margin: 0px 20px 0px 0px;
+  margin: 0px 20px 0px 20px;
   font-family: Courier, Fixed;
   font-size: 16px;
   float: left;
   background-color: #f6fc7d;
+}
+  
+.left-h2 {
+  float: left;
 }
 
 #status-buttons {
@@ -128,19 +127,25 @@ h2 {
   font-family: Arial, Helvetica, sans-serif;  
   padding: 10px 0px 10px 0px;
   margin: 10px 0px 0px 0px;
-  border-top-style: solid;
-  border-top-color: #BBBBBB; 
-  border-top-width: 1px;
+//  border-bottom-style: solid;
+//  border-bottom-color: #BBBBBB; 
+//  border-bottom-width: 1px;
+}
+  
+.section {
+  border-bottom-style: solid;
+  border-bottom-color: #BBBBBB; 
+  border-bottom-width: 1px;
+}
+
+.top-bottom-padding {
+  padding: 10px 0px 10px 0px;
 }
   
 .var_width_text {
   font-size: 12px;
   font-family: Arial, Helvetica, sans-serif;  
   padding: 10px 0px 0px 0px;
-//  margin: 10px 0px 0px 0px;
-//  border-top-style: solid;
-//  border-top-color: #BBBBBB; 
-//  border-top-width: 1px;
 }
   
 .control-links {
@@ -169,8 +174,13 @@ h2 {
       <div style='clear:both'></div>
     </div>
 
-    <div id="status_wrapper">
-      <h2>Status:</h2>
+    <div id="explanation" class="full-width-text section">
+      Noiszy <a href="https://noiszy.com/noiszys-algorithm/">navigates pseudo-randomly</a> around websites, to create a cloud of meaningless and misleading data.
+      Enable, disable, and customize sites below, then click <a href="#" id="start_link">"Start"</a> to make some noise.
+    </div>
+    
+    <div id="status_wrapper" class="section top-bottom-padding">
+      <h2 class="left-h2">Status</h2>
       <div>
         <div id="enabled_status" class="box status-box">Loading...</div>
         <div id="status_buttons">
@@ -182,9 +192,13 @@ h2 {
       </div>
     </div>
 
-    <div id="explanation" class="full-width-text">
-      Noiszy <a href="https://noiszy.com/noiszys-algorithm/">navigates believably-but-randomly</a> around websites, to create a cloud of misleading data associated with your browser.<br>
-      Enable, disable, and customize sites below, then click <a href="#" id="start_link">"Start"</a> to make some noise.
+    <div id="controls_wrapper" class="top-bottom-padding">
+      <input type="checkbox" id="block_streams">
+      <label for="block_streams">Try to avoid live streams</label>
+      <button id="reset_button"> &nbsp; Reset to defaults &nbsp; </button>
+      <div id="reset_status"></div>
+
+      For instructions or assistance, please <a href="https://noiszy.com/instructions-faqs/">visit our support page</a>.
     </div>
     
     <div id="sites_wrapper">
@@ -199,7 +213,7 @@ h2 {
       
       <div id="user_sites_wrapper">
         <div class="var_width_text">
-          Unpredictable behavior can be described here, where we should list a disclaimer about whatever yadda yadda.
+          Noiszy can cause unexpected results. Noiszy's algorithm may click a "Buy Now" button or disrupt a useful recommendation engine. Noiszy can't be held liable for the links it clicks, so add sites thoughtfully.  <a href="https://noiszy.com/privacy/">Learn more</a>
         </div>
         <h2>User-added sites</h2>
         <div id="user_site_alerts" class="alerts"></div>
@@ -218,22 +232,8 @@ h2 {
       </div>
       <div style='clear:both'></div>
       
-<!--      <br>
-
-      <button id="save"> &nbsp; Update & save site list &nbsp; </button>
-      <div id="status"></div>
--->
     </div>
 
-    <div id="footer_wrapper">
-      <input type="checkbox" id="block_streams">
-      <label for="block_streams">Try to avoid live streams</label><br>
-      <button id="reset_button"> &nbsp; Reset to defaults &nbsp; </button>
-      <div id="reset_status"></div>
-
-      For instructions or assistance, please <a href="https://noiszy.com/instructions-faqs/">visit our support page</a>.
-    </div>
-    
   </div>
   
 <script src="options.js"></script>

@@ -63,6 +63,9 @@ function get_enabled_sites(callback) {
     for (var i=0; i < sites_default.length; i++) {
       if (sites_default[i].checked) {
 //        sites[i] = sites_default[i].url;
+        if (sites_default[i].url.indexOf("https://") == -1) {
+          sites_default[i].url = "http://"+sites_default[i].url;
+        }
         sites.push(sites_default[i].url);
       }
     }
@@ -71,6 +74,9 @@ function get_enabled_sites(callback) {
     for (var i=0; i < sites_user.length; i++) {
       if (sites_user[i].checked) {
 //        sites[i+offset] = sites_user[i].url;
+        if (sites_user[i].url.indexOf("https://") == -1) {
+          sites_user[i].url = "http://"+sites_user[i].url;
+        }
         sites.push(sites_user[i].url);
       }
     }
@@ -83,35 +89,7 @@ function get_enabled_sites(callback) {
 function open_new_site() {
   
   get_enabled_sites(function(result) {
-  
-/*  chrome.storage.local.get({
-    sites: []
-  }, function (result) {
 
-    // build array of sites
-    var sites = [];
-    
-    console.log("result",result);
-    console.log("result.sites",result.sites);
-    console.log("result.sites.length",result.sites.length);
-    
-    var sites_default = result.sites.default;
-    for (var i=0; i < sites_default.length; i++) {
-      if (sites_default[i].checked) {
-//        sites[i] = sites_default[i].url;
-        sites.push(sites_default[i].url);
-      }
-    }
-    var offset = sites_default.length;
-    var sites_user = result.sites.user;
-    for (var i=0; i < sites_user.length; i++) {
-      if (sites_user[i].checked) {
-//        sites[i+offset] = sites_user[i].url;
-        sites.push(sites_user[i].url);
-      }
-    }
-
-*/
     var sites = result;
 
     console.log("in open_new_site - sites",sites);
@@ -122,9 +100,9 @@ function open_new_site() {
     
     //prepend http if it doesn't already exist
     var new_url = sites[num];
-    if (!/^https?\:\/\//i.test(sites[num])) {
-      new_url = "http://" + sites[num];
-    }
+//    if (!/^https?\:\/\//i.test(sites[num])) {
+//      new_url = "http://" + sites[num];
+//    }
 
     chrome.storage.local.get('tabId', function (resultTabId) {
 
@@ -325,9 +303,11 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
   } else if (request.msg == "track link click") {
     ga('send','pageview',request.url);
   } else if (request.msg == "reset") {
-    initialize_noiszy(false, function(){});
+    initialize_noiszy(false, function(results){
+      sendResponse(results);
+    });
 //    r = "reset called";
-    sendResponse({farewell: "reset called"});
+//      sendResponse({farewell: "reset called"});
   }
   // we're done
 //  sendResponse({farewell: r});
@@ -337,21 +317,26 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 
 function initialize_noiszy(preserve_preferences, callbackFunction) {
   console.log("initializing");
-  console.log("settings",settings);
+  console.log("presets",presets);
   console.log("preserve_preferences",preserve_preferences);
 
   // in dev mode, load links more quickly
   var base_interval = isDevMode() ? 0.2 : 1;
+//  var block_streams = false;
+  var block_streams = presets.blockStreams;
+  var user_site_preset = presets.userSitePreset;
       
   // load settings from local storage into a different variable
   chrome.storage.local.get({
-    sites: 'stored_sites'
+    sites: 'stored_sites',
+    blockStreams: [],
+    userSitePreset: []
   }, function(result) {
 
-    // copy default from settings into local storage
-    console.log("settings",settings);
-    var new_sites = settings.sites;
-    console.log("settings sites",new_sites);
+    // copy default from presets into local storage
+//    console.log("presets",presets);
+    var new_sites = JSON.parse(JSON.stringify(presets.sites));
+    console.log("presets sites",new_sites);
 
     console.log("got existing storage");
     console.log("result: ",result);
@@ -359,7 +344,7 @@ function initialize_noiszy(preserve_preferences, callbackFunction) {
     if (preserve_preferences) { //if true
       console.log("preserving preferences");
       // when upgrading, we should check for existing values in storage
-      // and update what's in settings to match
+      // and update what's in new_sites to match
       // default sites first
       try {
         if (result.sites.default) { 
@@ -399,30 +384,42 @@ function initialize_noiszy(preserve_preferences, callbackFunction) {
           console.log("sites",sites);
         }
       } catch(e) {}
+      
+      //and block streams
+      block_streams = result.blockStreams;
+      block_streams = result.blockStreams;
     }
 
     // now sites has current values
     // set values in local storage
     console.log("base_interval", base_interval);
     console.log("new_sites", new_sites);
+    console.log("block_streams", block_streams);
     
     //now finally, set values.
     chrome.storage.local.set({
       enabled: "Waiting",
       baseInterval: base_interval,
+      blockStreams: block_streams,
+      userSitePreset: user_site_preset,
       sites: new_sites
     }, function (result) {
       //check to make sure it worked
       chrome.storage.local.get({
         'sites': [],
         'enabled': [],
-        'baseInterval': []
+        'baseInterval': [],
+        'blockStreams': [],
+        'userSitePreset': []
       }, function (result) {
         console.log("result", result);
         console.log("result.enabled", result.enabled);
         console.log("result.sites", result.sites);
+        console.log("result.blockStreams", result.blockStreams);
+        console.log("result.userSitePreset", result.userSitePreset);
 
-        callbackFunction();
+//        callbackFunction();
+        callbackFunction(result);
       });
     });
   });

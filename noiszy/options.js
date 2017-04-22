@@ -147,8 +147,7 @@ function add_user_site(event) {
   var new_site = document.getElementById("new_site").value;
   console.log("new_site", new_site)
   
-  //check for real URL, & modify if helpful
-  
+  new_site = new_site.trim();
   
   //check against blacklist
   var blacklist = new RegExp("(amazon\.|ebay\.)","i");
@@ -163,6 +162,22 @@ function add_user_site(event) {
     }
   } catch(e) {
   }
+  
+  //check for real URL, & reject or modify if needed
+  try {
+    //test to see if it's a valid http/https URL
+    if (/((https\:\/\/)?[-a-z0-9]+(\.[-a-z0-9]{2,}){1,2}($|\s|\/.*))/i.test(new_site)) {
+      // matches
+      new_site = new_site.match(/((https\:\/\/)?[-a-z0-9]+(\.[-a-z0-9]{2,}){1,2}($|\s|\/.*))/i)[1];
+    } else {
+      // send a message in the status div and return
+      // don't clear the text field in case it was a typo
+      status_alert("user_site_alerts", "Not a valid URL - please try again", 3000);
+      return;
+    }
+    
+  } catch(e) {}
+  
   
   //add to storage
   console.log("adding to storage");
@@ -329,22 +344,27 @@ function write_site_to_div(site, div, i, delete_button) {
 function write_sites_to_page(items) {
   
   // default sites first
-  document.getElementById("default_sites").innerHTML= "";
+  var default_sites = document.getElementById("default_sites");
+  default_sites.innerHTML = "";
   try {
     console.log("items.sites.default", items.sites.default);
-    var default_sites = document.getElementById("default_sites");
+//    var default_sites = document.getElementById("default_sites");
     for (var i = 0; i < items.sites.default.length; i++) { 
       write_site_to_div(items.sites.default[i], default_sites, i, false);
     }
   } catch(e) {}
 
   // now user sites; start #ing at default+1
-  var offset = items.sites.default.length;
   console.log("user_sites div:",document.getElementById("user_sites"));
-  document.getElementById("user_sites").innerHTML = "";
+//  document.getElementById("user_sites").innerHTML = "";
+  var user_sites = document.getElementById("user_sites");
+  user_sites.innerHTML = "";
+  console.log("erased");
+
+  var offset = items.sites.default.length;
   try {
     console.log("items.sites.user",items.sites.user);
-    var user_sites = document.getElementById("user_sites");
+//    var user_sites = document.getElementById("user_sites");
     for (var i = 0; i < items.sites.user.length; i++) { 
       console.log("writing site", i);
       write_site_to_div(items.sites.user[i], user_sites, i+offset, true);
@@ -356,28 +376,51 @@ function write_sites_to_page(items) {
 
 // Restores select box and checkbox state using the preferences
 // stored in chrome.storage.
-function restore_options() {
+function restore_options(options) {
   
-  console.log("restoring options from saved");
-  chrome.storage.local.get({
-    enabled: 'Ready',
-    sites: 'sites'
-  }, function(items) {
-    
-    console.log("enabled: ",items.enabled);
-    console.log("sites: ",items.sites);
-    
-    write_sites_to_page(items);
-    
-    document.getElementById('enabled_status').textContent = items.enabled;
-  });
+  console.log("restoring options from saved - options:",options);
+  
+  // this is weird and works backwards.  Apparently options always exists, so it's
+  // always ignoring them.  just remove this check and keep the first case.
+  if (options) {
+    chrome.storage.local.get({
+      enabled: 'Ready',
+      blockStreams: [],
+      userSitePreset: [],
+      sites: 'sites'
+    }, function(items) {
+
+      console.log("enabled: ",items.enabled);
+      console.log("sites: ",items.sites);
+
+      write_sites_to_page(items);
+
+      //reset blockstreams too
+      console.log("items.blockStreams",items.blockStreams);
+      document.getElementById("block_streams").checked = items.blockStreams;
+
+
+      document.getElementById('enabled_status').textContent = items.enabled;
+      document.getElementById('new_site').value = items.userSitePreset;
+    });
+  } else {
+    write_sites_to_page(options);
+      //reset blockstreams too
+      console.log("items.blockStreams",options.blockStreams);
+      document.getElementById("block_streams").checked = options.blockStreams;
+      document.getElementById('enabled_status').textContent = options.enabled;
+      document.getElementById('new_site').value = options.userSitePreset;
+  }
 }
 
 function reset_options() {  
+  console.log("reset_options");
   chrome.runtime.sendMessage({msg: "reset"}, function(response) {
 //      console.log(response.farewell);
     //do not restore options
-    restore_options();
+    console.log("reset_options sendMessage 'reset' callback response:",response);
+    restore_options(response);
+//    write_sites_to_page(response);
   });
 }
 
