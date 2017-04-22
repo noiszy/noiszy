@@ -4,9 +4,10 @@
   <title>Noiszy Options</title>
 <style>
 body {
-    background-color: white;
-    font-family: Arial, Helvetica, sans-serif;
-    margin-left: 20px;
+  background-color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  min-width: 500px;
+  min-height: 500px;
 }
   
 div {
@@ -17,32 +18,73 @@ div {
 button {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
+  font-weight: normal;
   margin: 0px 0px 6px 0px;
 }
 
+.bold {
+  font-weight: bold;
+}
+  
 h2 {
 //    color: maroon;
 //    margin-left: 40px;
 } 
+
+#sites_wrapper {
+  width: 100%;
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 10px 0px;
+  border-top-style: solid;
+  border-top-color: #BBBBBB; 
+  border-top-width: 1px;
+//  border-bottom-style: solid;
+//  border-bottom-color: #BBBBBB; 
+//  border-bottom-width: 1px;
+}
+  
+#default_sites_wrapper {
+  width: 30%;
+  float: left;
+  padding: 0px 0px 10px 0px;
+  margin-top: 0px;
+  border-right-style: solid;
+  border-right-color: #BBBBBB; 
+  border-right-width: 1px;
+}
+  
+#user_sites_wrapper {
+  float: left;
+  width: 65%;
+  padding: 0px 0px 0px 10px;
+  margin: 0px 0px 0px 10px
+  border-left-style: solid;
+  border-left-color: #BBBBBB; 
+  border-left-width: 1px;
+}
+
+.site_group_spacer {
+  float: left;
+  border-left-style: solid;
+  border-left-color: #BBBBBB; 
+  border-left-width: 1px;
+  padding: 0px 10px 0px 10px;
+}
   
 .name {
     font-family: Arial, Helvetica, sans-serif;
-//    font-family: "proxima-nova";
     font-size: 20px;
-//    text-transform: uppercase;
     letter-spacing: 2px;
     font-weight: 600;
     font-style: normal;
     margin-left: 16px;
 }
 .tagline {
-//    font-family: Arial, Helvetica, sans-serif;
     font-family: "adobe-garamond-pro, serif";
     font-size: 14px;
     line-height: 1.5em;
     text-transform: none;
     letter-spacing: 1px;
-//    font-weight: 600;
     font-style: italic;
     margin-left: 16px;
 }
@@ -55,17 +97,21 @@ h2 {
 }
 
 .outline-box {
-  width: 400px;
+  width: 600px;
 }
 
 .status-box {
   width: 90px;
   padding: 16px;
-  margin: 0px 20px 0px 0px;
+  margin: 0px 20px 0px 20px;
   font-family: Courier, Fixed;
   font-size: 16px;
   float: left;
   background-color: #f6fc7d;
+}
+  
+.left-h2 {
+  float: left;
 }
 
 #status-buttons {
@@ -79,50 +125,119 @@ h2 {
 .site {
   //
 }
-
-#save {
-  margin-left: 16px;
+  
+.full-width-text {
+  width: 100%;
+  font-size: 12px;
+  font-family: Arial, Helvetica, sans-serif;  
+  padding: 10px 0px 10px 0px;
+  margin: 10px 0px 0px 0px;
+//  border-bottom-style: solid;
+//  border-bottom-color: #BBBBBB; 
+//  border-bottom-width: 1px;
 }
   
+.section {
+  border-bottom-style: solid;
+  border-bottom-color: #BBBBBB; 
+  border-bottom-width: 1px;
+}
+
+.top-bottom-padding {
+  padding: 10px 0px 10px 0px;
+}
+  
+.var_width_text {
+  font-size: 12px;
+  font-family: Arial, Helvetica, sans-serif;  
+  padding: 10px 0px 0px 0px;
+}
+  
+.control-links {
+  font-size: 10px;
+  margin: 6px 0px 6px 0px;
+}
+  
+.alerts {
+  background-color: bisque;
+  paddding: 4px 4px 4px 4px;
+  margin: 4px 0px 4px 0px;
+}
+
 </style>  
+  
 </head>
 <body>
 
   <div class="box outline-box">
 
-    <img src="icon_c_48.png" style="float: left;">
-    <span class="name">NOISZY</span><br>
-    <span class="tagline">They're listening. Make some noise.</span>
+    <div id="branding_wrapper">
+      <img src="icon_c_48.png" style="float: left;">
+      <span class="name">NOISZY</span><br>
+      <span class="tagline">They're listening. Make some noise.</span>
 
-    <div style='clear:both'></div>
-
-    <h2>Status:</h2>
-    <div class="indent">
-    <div>
-      <div id="enabled_status" class="box status-box">Loading...</div>
-    <div id="status_buttons">
-    <button id="enable"> &nbsp; Start &nbsp; </button><br>
-    <button id="disable"> &nbsp; Stop &nbsp; </button>
-    </div>
-    </div>
+      <div style='clear:both'></div>
     </div>
 
-    <div style='clear:both'></div>
-
-    <h2>Sites to visit:</h2>
-    <div id="sites" class="indent">
-      <div id="default_sites">
+    <div id="explanation" class="full-width-text section">
+      Noiszy <a href="https://noiszy.com/noiszys-algorithm/">navigates pseudo-randomly</a> around websites, to create a cloud of meaningless and misleading data.
+      Enable, disable, and customize sites below, then click "<a href="#" id="start_link">Start</a>" to make some noise.
+    </div>
+    
+    <div id="status_wrapper" class="section top-bottom-padding">
+      <h2 class="left-h2">Status</h2>
+      <div>
+        <div id="enabled_status" class="box status-box">Loading...</div>
+        <div id="status_buttons">
+          <button id="enable" class="bold"> &nbsp; Start &nbsp; </button><br>
+          <button id="disable"> &nbsp; Stop &nbsp; </button>
+        </div>
+        <div id="alerts" class="alerts"></div>
+        <div style='clear:both'></div>
       </div>
     </div>
 
-    <p>
-    <button id="save"> &nbsp; Update & save site list &nbsp; </button>
-    <div id="status"></div>
-    </p>
-  
-    <p>
+    <div id="controls_wrapper" class="top-bottom-padding">
+      <input type="checkbox" id="block_streams">
+      <label for="block_streams">Try to avoid live streams</label>
+      <button id="reset_button"> &nbsp; Reset to defaults &nbsp; </button>
+      <div id="reset_status"></div>
+
       For instructions or assistance, please <a href="https://noiszy.com/instructions-faqs/">visit our support page</a>.
-    </p>
+    </div>
+    
+    <div id="sites_wrapper">
+      <div id="default_sites_wrapper">
+        <h2>Default sites</h2>
+        <div id="default_sites"></div>
+        <div id="default_site_controls" class="control-links">
+          <a id="disable_all_default_sites" href="#">Disable all</a>
+          <a id="enable_all_default_sites" href="#">Enable all</a>
+        </div>
+      </div>
+      
+      <div id="user_sites_wrapper">
+        <div class="var_width_text">
+          Noiszy can cause unexpected results. Noiszy's algorithm may disrupt a useful recommendation engine or click a "Buy Now" button. Noiszy can't be held liable for the links it clicks, so add sites thoughtfully.  <a href="https://noiszy.com/choosing-sites/">Learn more</a>
+        </div>
+        <h2>User-added sites</h2>
+        <div id="user_site_alerts" class="alerts"></div>
+        <div id="add_site_form_div" class="indent">
+          <form id="add_site_form" action="#">
+            <input type="text" id="new_site" style="width: 250px;" value="wikipedia.org/wiki/Special:Random">
+            <button type="submit"> &nbsp; Add &nbsp; </button>
+          </form>
+        </div>
+        <div id="user_sites"></div>
+        <div id="user_site_controls" class="control-links">
+          <a id="disable_all_user_sites" href="#">Disable all</a>
+          <a id="enable_all_user_sites" href="#">Enable all</a>
+        </div>
+      </div>
+      <div style='clear:both'></div>
+      
+    </div>
+
   </div>
   
 <script src="options.js"></script>
