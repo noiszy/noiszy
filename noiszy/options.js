@@ -49,9 +49,11 @@ function save_options() {
 
   // also check other options
   var block_streams = document.getElementById("block_streams").checked;
+  var explode_links = document.getElementById("explode_links").checked;
   
   chrome.storage.local.set({
     blockStreams: block_streams,
+    explodeLinks: explode_links,
     sites: sites_formatted
   }, function() {
   });
@@ -404,3 +406,5 @@ document.getElementById('block_streams').addEventListener('click',
     save_options);
 document.getElementById('reset_button').addEventListener('click',
     reset_options);
+document.getElementById('explode_links').addEventListener('click',
+    save_options);

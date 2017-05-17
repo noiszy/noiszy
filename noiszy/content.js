@@ -15,7 +15,7 @@ function clickRandomLink(blockStreams, sendResponse) {
   blockStream_QS = "";
   if (blockStreams == true) {
     // /go2 = cnn live TV link
-    blockStream_QS = ":not([href*='live']):not([href*='stream']):not([href*='/go2'])";
+    blockStream_QS = ":not([href*='live']):not([href*='stream']):not([href*='/go2']):not([href*='video'])";
   }
   
   // don't open new windows, email programs, or javascript links
@@ -27,7 +27,8 @@ function clickRandomLink(blockStreams, sendResponse) {
   // if it points to its own domain by domain name only, it's onsite
   onsite_with_domain_QS = "a[href^='" + domain[4] + "']" + basicQS + blockStream_QS;
   // what about subdomains...?
-  // fix that here at some point
+  // base that on the stored current site
+  
   //put it all together
   var full_QS = no_domain_QS + ", " + onsite_with_protocol_QS + ", " + onsite_with_domain_QS;
 //  console.log("full_QS", full_QS);
