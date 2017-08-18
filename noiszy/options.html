@@ -44,6 +44,7 @@ h2 {
 }
   
 #default_sites_wrapper {
+/*#news_sites_wrapper {*/
   width: 30%;
   float: left;
   padding: 0px 0px 10px 0px;
@@ -156,6 +157,17 @@ h2 {
 .control-links {
   font-size: 10px;
   margin: 6px 0px 6px 0px;
+/*
+  color: blue;
+  text-decoration: underline;
+*/
+}
+
+.control-link {
+/*  font-size: 10px;*/
+/*  margin: 6px 0px 6px 0px;*/
+  color: blue;
+  text-decoration: underline;
 }
   
 .alerts {
@@ -184,10 +196,12 @@ h2 {
       Enable, disable, and customize sites below, then click "<a href="#" id="start_link">Start</a>" to make some noise.
     </div>
     
+    <!--
     <div id="link_exploder_wrapper" class="section top-bottom-padding">
       <input type="checkbox" id="explode_links">
       <label for="explode_links">Explode links</label>
     </div>
+    -->
     
     <div id="status_wrapper" class="section top-bottom-padding">
       <h2 class="left-h2">Status</h2>
@@ -214,11 +228,26 @@ h2 {
     <div id="sites_wrapper">
       <div id="default_sites_wrapper">
         <h2>Default sites</h2>
-        <div id="default_sites"></div>
-        <div id="default_site_controls" class="control-links">
-          <a id="disable_all_default_sites" href="#">Disable all</a>
-          <a id="enable_all_default_sites" href="#">Enable all</a>
-        </div>
+        
+          <div id="news_sites_wrapper_small">
+            <div id="news_sites"></div>
+            <div id="news_site_controls" class="control-links">
+              <span id="disable_all_news_sites" class="control-link">Disable all</span>
+              <span id="enable_all_news_sites" class="control-link">Enable all</span>
+            </div>
+          </div>
+        
+<!--
+          <div id="default_sites_wrapper_small">
+            Default sites would go here - will remove
+            <div id="default_sites"></div>
+            <div id="default_site_controls" class="control-links">
+              <div id="disable_all_default_sites">Disable all</a>
+              <div id="enable_all_default_sites">Enable all</a>
+            </div>
+          </div>
+-->
+        
       </div>
       
       <div id="user_sites_wrapper">

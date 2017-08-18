@@ -1,6 +1,13 @@
+window.browser = (function () {
+  return window.msBrowser ||
+    window.browser ||
+    window.chrome;
+})();
+
+
 // track in GA when this page is opened/created
 
-chrome.runtime.sendMessage({
+browser.runtime.sendMessage({
   msg: "track options open"
 }, function(response) {
   console.log("response", response);
@@ -15,23 +22,43 @@ function status_alert(divId, message, time) {
     }, time);
 }
 
-// Saves options to chrome.storage
+
+// Saves options to storage
 function save_options() {
 
+//  // get the default inputs
+//  var default_sites = document.getElementById("default_sites");
+//  var default_site_list = default_sites.getElementsByTagName("input");
+//  var sites_formatted = new Object();
+//  sites_formatted.default = [];
+//  console.log("default_site list: ",default_site_list);
+//  
+//  // loop through the displayed sites and make an array; then update what's saved
+//  for (var i=0; i < default_site_list.length; i++) { 
+//    console.log("i: ",i,default_site_list[i]);
+//    sites_formatted.default[i] = new Object();
+//    sites_formatted.default[i].url = default_site_list[i].value;
+//    sites_formatted.default[i].checked = default_site_list[i].checked;
+//  }
+  
   // get the default inputs
-  var default_sites = document.getElementById("default_sites");
-  var default_site_list = default_sites.getElementsByTagName("input");
+  var news_sites = document.getElementById("news_sites");
+  console.log("news_sites: ",news_sites);
+  var news_site_list = news_sites.getElementsByTagName("input");
+  console.log("news_site_list: ",news_site_list);
   var sites_formatted = new Object();
-  sites_formatted.default = [];
-  console.log("default_site list: ",default_site_list);
+//  sites_formatted.default = [];
+  sites_formatted.news = [];
+  console.log("news_site list: ",news_site_list);
   
   // loop through the displayed sites and make an array; then update what's saved
-  for (var i=0; i < default_site_list.length; i++) { 
-    console.log("i: ",i,default_site_list[i]);
-    sites_formatted.default[i] = new Object();
-    sites_formatted.default[i].url = default_site_list[i].value;
-    sites_formatted.default[i].checked = default_site_list[i].checked;
+  for (var i=0; i < news_site_list.length; i++) { 
+    console.log("i: ",i,news_site_list[i]);
+    sites_formatted.news[i] = new Object();
+    sites_formatted.news[i].url = news_site_list[i].value;
+    sites_formatted.news[i].checked = news_site_list[i].checked;
   }
+  
   
   // get the user inputs
   var user_sites = document.getElementById("user_sites");
@@ -49,11 +76,13 @@ function save_options() {
 
   // also check other options
   var block_streams = document.getElementById("block_streams").checked;
-  var explode_links = document.getElementById("explode_links").checked;
+//  var explode_links = document.getElementById("explode_links").checked;
   
-  chrome.storage.local.set({
+  console.log("saving site settings:");
+  console.log(sites_formatted);
+  browser.storage.local.set({
     blockStreams: block_streams,
-    explodeLinks: explode_links,
+//    explodeLinks: explode_links,
     sites: sites_formatted
   }, function() {
   });
@@ -62,8 +91,8 @@ function save_options() {
 
 function disable_script() {
   console.log("disabling");
-  chrome.storage.local.set({enabled: "Waiting"}, function () {
-    chrome.alarms.clearAll();
+  browser.storage.local.set({enabled: "Waiting"}, function () {
+    alarms.clearAll();
 
     console.log("disabled");
     document.getElementById('enabled_status').textContent = "Waiting";
@@ -73,8 +102,8 @@ function disable_script() {
 function enable_script() {
   console.log("enabling");
   // send message to background
-  //  chrome.runtime.sendMessage({msg: "enable"}, function(response) {
-  chrome.runtime.sendMessage({msg: "start"}, function(response) {
+  //  runtime.sendMessage({msg: "enable"}, function(response) {
+  browser.runtime.sendMessage({msg: "start"}, function(response) {
     console.log("response", response);
     if (response.farewell == "no enabled sites") {
       // no enabled sites
@@ -86,7 +115,7 @@ function enable_script() {
     } else {
       console.log("response", response);
       // it worked
-      chrome.storage.local.set({enabled: "Running"}, function () {
+      browser.storage.local.set({enabled: "Running"}, function () {
         console.log("running");
         document.getElementById('enabled_status').textContent = "Running";      
       });
@@ -106,12 +135,16 @@ function enable_all_sites() {
   }
   // and save everything
   save_options();
+  Event.stopPropagation();
+  return false;
 }
 
 function disable_all_sites() {
   //get wrapper div
   var wrapper_div = this.parentNode.parentNode;
   //get & check checkboxes
+  
+  console.log("disabling all sites in " + this.getAttribute('id'));
   var inputs = wrapper_div.getElementsByTagName("input");
   for (var i=0; i<inputs.length; i++) {
     if (inputs[i].getAttribute("type") == "checkbox") {
@@ -120,6 +153,9 @@ function disable_all_sites() {
   }
   // and save everything
   save_options();
+  Event.stopPropagation();
+
+  return false;
 }
 
 
@@ -166,7 +202,7 @@ function add_user_site(event) {
   //add to storage
   console.log("adding to storage");
   //get current values
-  chrome.storage.local.get({
+  browser.storage.local.get({
     enabled: 'Ready',
     sites: 'sites'
   }, function(items) {
@@ -193,11 +229,11 @@ function add_user_site(event) {
     console.log("items.sites: ",items.sites);
     console.log("items: ",items);
     
-    chrome.storage.local.set({
+    browser.storage.local.set({
       sites: items.sites
     }, function() {
       //track it
-      chrome.runtime.sendMessage({
+      browser.runtime.sendMessage({
         msg: "track add site",
         added: new_site
       }, function(response) {
@@ -205,7 +241,7 @@ function add_user_site(event) {
       });
 
       
-      chrome.storage.local.get({
+      browser.storage.local.get({
 //        enabled: 'Ready',
         sites: 'sites'
       }, function(items) {
@@ -235,7 +271,7 @@ function remove_site() {
   this.parentNode.parentNode.removeChild(this.parentNode);
 
   // get current values
-  chrome.storage.local.get({
+  browser.storage.local.get({
     sites: 'sites'
   }, function(items) {
     
@@ -252,7 +288,7 @@ function remove_site() {
     
     console.log("items: ",items);
     
-    chrome.storage.local.set({
+    browser.storage.local.set({
       sites: items.sites
     }, function() {
     });
@@ -307,13 +343,22 @@ function write_site_to_div(site, div, i, delete_button) {
 
 function write_sites_to_page(items) {
   
+//  // default sites first
+//  var default_sites = document.getElementById("default_sites");
+//  default_sites.innerHTML = "";
+//  try {
+//    console.log("items.sites.default", items.sites.default);
+//    for (var i = 0; i < items.sites.default.length; i++) { 
+//      write_site_to_div(items.sites.default[i], default_sites, i, false);
+//    }
+//  } catch(e) {}
   // default sites first
-  var default_sites = document.getElementById("default_sites");
-  default_sites.innerHTML = "";
+  var news_sites = document.getElementById("news_sites");
+  news_sites.innerHTML = "";
   try {
-    console.log("items.sites.default", items.sites.default);
-    for (var i = 0; i < items.sites.default.length; i++) { 
-      write_site_to_div(items.sites.default[i], default_sites, i, false);
+    console.log("items.sites.default", items.sites.news);
+    for (var i = 0; i < items.sites.news.length; i++) { 
+      write_site_to_div(items.sites.news[i], news_sites, i, false);
     }
   } catch(e) {}
 
@@ -323,7 +368,8 @@ function write_sites_to_page(items) {
   user_sites.innerHTML = "";
   console.log("erased");
 
-  var offset = items.sites.default.length;
+//  var offset = items.sites.default.length;
+  var offset = items.sites.news.length;
   try {
     console.log("items.sites.user",items.sites.user);
     for (var i = 0; i < items.sites.user.length; i++) { 
@@ -336,12 +382,12 @@ function write_sites_to_page(items) {
 }
 
 // Restores select box and checkbox state using the preferences
-// stored in chrome.storage.
+// stored in storage.
 function restore_options(options) {
   
   console.log("restoring options from saved - options:",options);
   
-  chrome.storage.local.get({
+  browser.storage.local.get({
     enabled: 'Ready',
     blockStreams: [],
     userSitePreset: [],
@@ -361,7 +407,7 @@ function restore_options(options) {
 
 function reset_options() {  
 //  console.log("reset_options");
-  chrome.runtime.sendMessage({msg: "reset"}, function(response) {
+  browser.runtime.sendMessage({msg: "reset"}, function(response) {
 //    console.log("reset_options sendMessage 'reset' callback response:",response);
     restore_options();
 //    restore_options(response);
@@ -376,35 +422,31 @@ document.addEventListener('DOMContentLoaded', function () {
             var ln = links[i];
             var location = ln.href;
             ln.onclick = function () {
-                chrome.tabs.create({active: true, url: location});
+                browser.tabs.create({active: true, url: location});
             };
         })();
     }
 });
 
-document.addEventListener('DOMContentLoaded', 
-    restore_options);
-document.getElementById('sites_wrapper').addEventListener('click',
-    save_options);
-document.getElementById('disable').addEventListener('click',
-    disable_script);
-document.getElementById('enable').addEventListener('click',
-    enable_script);
-document.getElementById('start_link').addEventListener('click',
-    enable_script);
-document.getElementById('add_site_form').addEventListener('submit',
-    add_user_site);
-document.getElementById('disable_all_default_sites').addEventListener('click',
-    disable_all_sites);
-document.getElementById('enable_all_default_sites').addEventListener('click',
-    enable_all_sites);
-document.getElementById('disable_all_user_sites').addEventListener('click',
-    disable_all_sites);
-document.getElementById('enable_all_user_sites').addEventListener('click',
-    enable_all_sites);
-document.getElementById('block_streams').addEventListener('click',
-    save_options);
-document.getElementById('reset_button').addEventListener('click',
-    reset_options);
-document.getElementById('explode_links').addEventListener('click',
-    save_options);
+document.addEventListener('DOMContentLoaded', restore_options);
+document.getElementById('sites_wrapper').addEventListener('click', save_options);
+document.getElementById('disable').addEventListener('click', disable_script);
+document.getElementById('enable').addEventListener('click', enable_script);
+document.getElementById('start_link').addEventListener('click', enable_script);
+document.getElementById('add_site_form').addEventListener('submit', add_user_site);
+
+//document.getElementById('disable_all_default_sites').addEventListener('click', disable_all_sites);
+//document.getElementById('enable_all_default_sites').addEventListener('click', enable_all_sites);
+
+document.getElementById('disable_all_news_sites').addEventListener('click', disable_all_sites);
+document.getElementById('enable_all_news_sites').addEventListener('click', enable_all_sites);
+
+document.getElementById('disable_all_user_sites').addEventListener('click', disable_all_sites);
+document.getElementById('enable_all_user_sites').addEventListener('click', enable_all_sites);
+
+document.getElementById('block_streams').addEventListener('click', save_options);
+document.getElementById('reset_button').addEventListener('click', reset_options);
+
+
+//document.getElementById('explode_links').addEventListener('click',
+//    save_options);

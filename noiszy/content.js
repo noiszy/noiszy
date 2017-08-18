@@ -1,3 +1,10 @@
+window.browser = (function () {
+  return window.msBrowser ||
+    window.browser ||
+    window.chrome;
+})();
+
+
 function getRandomIntInclusive(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -63,7 +70,7 @@ function clickRandomLink(blockStreams, sendResponse) {
 
 
 // Listen for messages
-chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
+browser.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
   
     if (msg.text === 'click link') {
 

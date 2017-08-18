@@ -1,3 +1,10 @@
+window.browser = (function () {
+  return window.msBrowser ||
+    window.browser ||
+    window.chrome;
+})();
+
+
 // track in GA when this page is created
 // it's persistent, so it will only happne once
 
@@ -20,7 +27,7 @@ function track_clicked_link(link) {
 
 
 function isDevMode() {
-    return !('update_url' in chrome.runtime.getManifest());
+    return !('update_url' in browser.runtime.getManifest());
 }
 
 
@@ -31,23 +38,33 @@ function getRandomIntInclusive(min, max) {
 }
 
 function get_enabled_sites(callback) {
-  chrome.storage.local.get({
+  browser.storage.local.get({
     sites: []
   }, function (result) {
 
     // build array of sites
     var sites = [];
     
-    var sites_default = result.sites.default;
-    for (var i=0; i < sites_default.length; i++) {
-      if (sites_default[i].checked) {
-        if (sites_default[i].url.indexOf("https://") == -1) {
-          sites_default[i].url = "http://"+sites_default[i].url;
+//    var sites_default = result.sites.default;
+//    for (var i=0; i < sites_default.length; i++) {
+//      if (sites_default[i].checked) {
+//        if (sites_default[i].url.indexOf("https://") == -1) {
+//          sites_default[i].url = "http://"+sites_default[i].url;
+//        }
+//        sites.push(sites_default[i].url);
+//      }
+//    }
+//    var offset = sites_default.length;
+    var sites_news = result.sites.news;
+    for (var i=0; i < sites_news.length; i++) {
+      if (sites_news[i].checked) {
+        if (sites_news[i].url.indexOf("https://") == -1) {
+          sites_news[i].url = "http://"+sites_news[i].url;
         }
-        sites.push(sites_default[i].url);
+        sites.push(sites_news[i].url);
       }
     }
-    var offset = sites_default.length;
+    var offset = sites_news.length;
     var sites_user = result.sites.user;
     for (var i=0; i < sites_user.length; i++) {
       if (sites_user[i].checked) {
@@ -77,12 +94,12 @@ function open_new_site() {
     //prepend http if it doesn't already exist
     var new_url = sites[num];
 
-    chrome.storage.local.get('tabId', function (resultTabId) {
+    browser.storage.local.get('tabId', function (resultTabId) {
 
-      chrome.tabs.update(resultTabId.tabId, {url: new_url}, function() {
+      browser.tabs.update(resultTabId.tabId, {url: new_url}, function() {
         // in case we want to put anything here...
       });
-      chrome.storage.local.set({activeSite: new_url}, function() {
+      browser.storage.local.set({activeSite: new_url}, function() {
         // in case we want to put anything here...
       });
 
@@ -94,17 +111,17 @@ function open_new_site() {
 }
 
 
-chrome.alarms.onAlarm.addListener(function(alarm) {
+browser.alarms.onAlarm.addListener(function(alarm) {
   
   console.log("alarm.name", alarm.name);
   
-  chrome.storage.local.get('enabled', function(result){
+  browser.storage.local.get('enabled', function(result){
     var enabled = result.enabled;
 //    console.log("enabled", enabled);
 
     if (enabled == "Enabled" || enabled == "Running") {
     
-      chrome.storage.local.get({
+      browser.storage.local.get({
         'tabId': [],
         'blockStreams': []
       }, function (result) {
@@ -112,11 +129,11 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
         console.log(result.tabId);
         
         //get the tab, to be sure it exists
-        chrome.tabs.get(result.tabId, function (tab) {
+        browser.tabs.get(result.tabId, function (tab) {
           console.log("tab",tab);
           
-          if (chrome.runtime.lastError) {
-            console.log(chrome.runtime.lastError.message);
+          if (browser.runtime.lastError) {
+            console.log(browser.runtime.lastError.message);
           } else {
       
             if (alarm.name == "newSite") {
@@ -126,7 +143,7 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
             } else if (alarm.name == "linkClick") {
               //click a link on the page, using a content script
 //              console.log("inside linkClick");
-              chrome.tabs.sendMessage(result.tabId, {
+              browser.tabs.sendMessage(result.tabId, {
                 text: 'click link',
                 blockStreams: result.blockStreams
               }, function(response) {
@@ -151,16 +168,16 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
             // the '4' should be controlled in a setting, but use this for now
 
             // create alarm so link will be clicked
-            chrome.storage.local.get('baseInterval', function(result){
+            browser.storage.local.get('baseInterval', function(result){
               // mult x random 2x, so results skew closer to baseInterval
               var interval = result.baseInterval + (Math.random() * Math.random() * result.baseInterval);
               
               var rand = getRandomIntInclusive(0,4);
 //              console.log("rand alarm int: ", rand);
               if (rand == 0) { // 1/4 of the time
-                chrome.alarms.create("newSite",{delayInMinutes: interval});
+                browser.alarms.create("newSite",{delayInMinutes: interval});
               } else {
-                chrome.alarms.create("linkClick",{delayInMinutes: interval});
+                browser.alarms.create("linkClick",{delayInMinutes: interval});
               }
             });
 
@@ -175,7 +192,7 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
 
 
 
-chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
+browser.runtime.onMessage.addListener( function(request, sender, sendResponse) {
     
   console.log("message: ", request.msg);
 
@@ -188,7 +205,7 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
       if (result && result.length > 0) {
 
         //get current tab
-        chrome.tabs.query({active: true, currentWindow: true}, function(arrayOfTabs) {
+        browser.tabs.query({active: true, currentWindow: true}, function(arrayOfTabs) {
           // since only one tab should be active and in the current window at once
           // the return variable should only have one entry
           var activeTab = arrayOfTabs[0];
@@ -196,7 +213,7 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 //          console.log("arrayOfTabs[0]",arrayOfTabs[0]);
 //          console.log("storing tab id: " + arrayOfTabs[0].id);
           // store the tab id
-          chrome.storage.local.set({tabId: arrayOfTabs[0].id}, function() {});
+          browser.storage.local.set({tabId: arrayOfTabs[0].id}, function() {});
 
           // open new site
           open_new_site();
@@ -205,10 +222,10 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 
         // create first alarm - should always be a linkClick
 
-        chrome.storage.local.get('baseInterval', function(result){
+        browser.storage.local.get('baseInterval', function(result){
           // mult x random 2x, so results skew lower
           var interval = result.baseInterval + (Math.random() * Math.random() * result.baseInterval);
-          chrome.alarms.create("linkClick",{delayInMinutes: interval});
+          browser.alarms.create("linkClick",{delayInMinutes: interval});
         });
       } else { //no enabled sites
         // send a response; options page will show an alert
@@ -244,9 +261,13 @@ function initialize_noiszy(preserve_preferences, callbackFunction) {
   var base_interval = isDevMode() ? 0.2 : 1;
   var block_streams = presets.blockStreams;
   var user_site_preset = presets.userSitePreset;
+  
+  // start with list of sites from presets (JSON)
+  var new_sites = JSON.parse(JSON.stringify(presets.sites));
+
       
-  // load settings from local storage into a different variable
-  chrome.storage.local.get({
+  // load settings from local storage so we can work with them
+  browser.storage.local.get({
     sites: 'stored_sites',
     blockStreams: [],
     userSitePreset: []
@@ -254,25 +275,41 @@ function initialize_noiszy(preserve_preferences, callbackFunction) {
 
     // copy default from presets into local storage
     // have to do this, or else we wind up updating presets.sites via reference
-    var new_sites = JSON.parse(JSON.stringify(presets.sites));
+//    var new_sites = JSON.parse(JSON.stringify(presets.sites));
 //    console.log("presets sites",new_sites);
 
-    if (preserve_preferences) { //if true
+    if (preserve_preferences) {
       console.log("preserving preferences");
-
-      // default sites first
+      
+      //if "default" exists, delete "news" (if it exists) and change "default" to "news"
       try {
-        if (result.sites.default) { 
-          var stored_sites = result.sites.default;
+        if (new_sites.default) {
+          new_sites.news ? delete new_sites.news: ''; // delete if it exists in result; will delete from lS at the end
+          new_sites = JSON.parse(JSON.stringify(new_sites).split('"default":').join('"news":')); // change name
+        }
+      } catch(e) {
+        console.log("trouble updating preferences...");
+        // so just delete them...?
+        // TODO: delete prefs
+      }
+      
+
+      // copy preferences on/off values into new_sites
+      
+      // news sites first
+      // TODO: change this to loop over whatever is in 'sites'
+      try {
+        if (result.sites.news) { 
+          var stored_sites = result.sites.news;
           //cycle through
           for (var i=0; i<stored_sites.length; i++) {
-            for (var j=0; j<sites.default.length; j++) {
+            for (var j=0; j<sites.news.length; j++) {
 
               //this should be the other way around.  stored URLs may be longer.
 //              if (new_sites.default[j].url.indexOf(stored_sites[i].url) > -1) {
-              if (stored_sites[i].url.indexOf(new_sites.default[j].url) > -1) {
+              if (stored_sites[i].url.indexOf(new_sites.news[j].url) > -1) {
                 //then update new_sites[j] with checked value from sites[i]
-                new_sites.default[j].checked = stored_sites[i].checked;
+                new_sites.news[j].checked = stored_sites[i].checked;
               }
             }
           }
@@ -297,12 +334,11 @@ function initialize_noiszy(preserve_preferences, callbackFunction) {
 
     // now sites has current values
     // set values in local storage
-//    console.log("base_interval", base_interval);
-//    console.log("new_sites", new_sites);
-//    console.log("block_streams", block_streams);
-    
-    //now finally, set values.
-    chrome.storage.local.set({
+    console.log("base_interval", base_interval);
+    console.log("new_sites", new_sites);
+    console.log("block_streams", block_streams);
+        
+    browser.storage.local.set({
       enabled: "Waiting",
       baseInterval: base_interval,
       blockStreams: block_streams,
@@ -310,7 +346,7 @@ function initialize_noiszy(preserve_preferences, callbackFunction) {
       sites: new_sites
     }, function (result) {
       //check to make sure it worked
-      chrome.storage.local.get({
+      browser.storage.local.get({
         'sites': [],
         'enabled': [],
         'baseInterval': [],
@@ -326,6 +362,9 @@ function initialize_noiszy(preserve_preferences, callbackFunction) {
         callbackFunction(result);
       });
     });
+    
+//    }
+    
   });
 }
 
