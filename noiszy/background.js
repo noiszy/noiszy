@@ -55,25 +55,74 @@ function get_enabled_sites(callback) {
 //      }
 //    }
 //    var offset = sites_default.length;
-    var sites_news = result.sites.news;
-    for (var i=0; i < sites_news.length; i++) {
-      if (sites_news[i].checked) {
-        if (sites_news[i].url.indexOf("https://") == -1) {
-          sites_news[i].url = "http://"+sites_news[i].url;
+    
+    console.log("result",result);
+    var numcats = Object.keys(result.sites).length;
+    console.log("numcats",numcats);
+    var thissites;
+    for (var c=0; c < numcats; c++) {
+      
+//      result.sites[Object.keys(result.sites)[i]]
+      thissites = result.sites[Object.keys(result.sites)[c]];
+      console.log("thissites",thissites);
+      console.log("thissites[0]",thissites[0]);
+      console.log("thissites[0]",thissites[0]);
+      
+      try {
+        for (var i=0; i < thissites.length; i++) {
+          console.log("thissites[i]",thissites[i]);
+          if (thissites[i].checked) {
+            if (thissites[i].url.indexOf("https://") == -1) {
+              thissites[i].url = "http://"+thissites[i].url;
+            }
+            sites.push(thissites[i].url);
+          }
         }
-        sites.push(sites_news[i].url);
-      }
+      } catch(e) {}
+      console.log("enabled sites: ", sites);
     }
-    var offset = sites_news.length;
-    var sites_user = result.sites.user;
-    for (var i=0; i < sites_user.length; i++) {
-      if (sites_user[i].checked) {
-        if (sites_user[i].url.indexOf("https://") == -1) {
-          sites_user[i].url = "http://"+sites_user[i].url;
-        }
-        sites.push(sites_user[i].url);
-      }
-    }
+    
+    console.log("enabled sites: ", sites);
+    
+//    var sites_news = result.sites.news;
+//    for (var i=0; i < sites_news.length; i++) {
+//      if (sites_news[i].checked) {
+//        if (sites_news[i].url.indexOf("https://") == -1) {
+//          sites_news[i].url = "http://"+sites_news[i].url;
+//        }
+//        sites.push(sites_news[i].url);
+//      }
+//    }
+//    var offset = sites_news.length;
+//    var sites_user = result.sites.user;
+//    for (var i=0; i < sites_user.length; i++) {
+//      if (sites_user[i].checked) {
+//        if (sites_user[i].url.indexOf("https://") == -1) {
+//          sites_user[i].url = "http://"+sites_user[i].url;
+//        }
+//        sites.push(sites_user[i].url);
+//      }
+//    }    
+    
+//    var sites_news = result.sites.news;
+//    for (var i=0; i < sites_news.length; i++) {
+//      if (sites_news[i].checked) {
+//        if (sites_news[i].url.indexOf("https://") == -1) {
+//          sites_news[i].url = "http://"+sites_news[i].url;
+//        }
+//        sites.push(sites_news[i].url);
+//      }
+//    }
+//    var offset = sites_news.length;
+//    var sites_user = result.sites.user;
+//    for (var i=0; i < sites_user.length; i++) {
+//      if (sites_user[i].checked) {
+//        if (sites_user[i].url.indexOf("https://") == -1) {
+//          sites_user[i].url = "http://"+sites_user[i].url;
+//        }
+//        sites.push(sites_user[i].url);
+//      }
+//    }
     
     callback(sites);
   });
@@ -346,21 +395,18 @@ function initialize_noiszy(preserve_preferences, callbackFunction) {
       sites: new_sites
     }, function (result) {
       //check to make sure it worked
-      browser.storage.local.get({
-        'sites': [],
-        'enabled': [],
-        'baseInterval': [],
-        'blockStreams': [],
-        'userSitePreset': []
-      }, function (result) {
-        console.log("result", result);
-//        console.log("result.enabled", result.enabled);
-//        console.log("result.sites", result.sites);
-//        console.log("result.blockStreams", result.blockStreams);
-//        console.log("result.userSitePreset", result.userSitePreset);
-
-        callbackFunction(result);
-      });
+//      browser.storage.local.get({
+//        'sites': [],
+//        'enabled': [],
+//        'baseInterval': [],
+//        'blockStreams': [],
+//        'userSitePreset': []
+//      }, function (result) {
+//        console.log("result", result);
+//
+//        callbackFunction(result);
+//      });
+      callbackFunction(result);
     });
     
 //    }

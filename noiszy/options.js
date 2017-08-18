@@ -42,23 +42,56 @@ function save_options() {
 //  }
   
   // get the default inputs
-  var news_sites = document.getElementById("news_sites");
-  console.log("news_sites: ",news_sites);
-  var news_site_list = news_sites.getElementsByTagName("input");
-  console.log("news_site_list: ",news_site_list);
-  var sites_formatted = new Object();
-//  sites_formatted.default = [];
-  sites_formatted.news = [];
-  console.log("news_site list: ",news_site_list);
   
-  // loop through the displayed sites and make an array; then update what's saved
-  for (var i=0; i < news_site_list.length; i++) { 
-    console.log("i: ",i,news_site_list[i]);
-    sites_formatted.news[i] = new Object();
-    sites_formatted.news[i].url = news_site_list[i].value;
-    sites_formatted.news[i].checked = news_site_list[i].checked;
+//  var news_sites = document.getElementById("news_sites");
+  var default_sites = document.getElementById("default_sites_wrapper");
+//  console.log("news_sites: ",news_sites);
+//  var news_site_list = news_sites.getElementsByTagName("input");
+
+  // get the categories
+  var site_categories = default_sites.getElementsByClassName("site_list_category_wrapper");
+  console.log("site_categories: ",site_categories);
+  var cat, inputs;
+  var sites_formatted = new Object();
+  
+  for (var c=0; c < site_categories.length; c++) {
+    // get name
+    console.log("site_categories[c]: ",site_categories[i]);
+    console.log('site_categories[c].getAttribute("data-category"): ',site_categories[c].getAttribute("data-category"));
+    cat = site_categories[c].getAttribute("data-category");
+    console.log("cat",cat);
+  
+    inputs = site_categories[c].getElementsByTagName("input");
+    console.log("inputs: ",inputs);
+//    var sites_formatted = new Object();
+  //  sites_formatted.default = [];
+    sites_formatted[cat] = [];
+    console.log("sites_formatted[cat]: ",sites_formatted[cat]);
+
+    // loop through the displayed sites and make an array; then update what's saved
+    for (var i=0; i < inputs.length; i++) { 
+      console.log("i: ",i,inputs[i]);
+      sites_formatted[cat][i] = new Object();
+      sites_formatted[cat][i].url = inputs[i].value;
+      sites_formatted[cat][i].checked = inputs[i].checked;
+    }
   }
   
+//  var news_site_list = news_sites.getElementsByTagName("input");
+//  console.log("news_site_list: ",news_site_list);
+//  var sites_formatted = new Object();
+////  sites_formatted.default = [];
+//  sites_formatted.news = [];
+//  console.log("news_site list: ",news_site_list);
+//  
+//  // loop through the displayed sites and make an array; then update what's saved
+//  for (var i=0; i < news_site_list.length; i++) { 
+//    console.log("i: ",i,news_site_list[i]);
+//    sites_formatted.news[i] = new Object();
+//    sites_formatted.news[i].url = news_site_list[i].value;
+//    sites_formatted.news[i].checked = news_site_list[i].checked;
+//  }
+//  
   
   // get the user inputs
   var user_sites = document.getElementById("user_sites");
@@ -339,7 +372,81 @@ function write_site_to_div(site, div, i, delete_button) {
 
   return;
 }
+
+function toggle_menu() {
+//  console.log("toggle menu click");
+//  console.log("this");
+//  console.log(this);
+  var menuId = this.getAttribute("data-category") + "_sites";
+//  console.log("menuId", menuId);
+//  var menu = document.getElementById(menuId);
+  document.getElementById(menuId).classList.toggle("show");
+//  document.getElementById(menuId+"_controls").classList.toggle("show");
+}
   
+function write_site_category_list(category,items,toDiv,iOffset) {
+  var thisWrapper, thisTitle, thisSites, thisControls, thisDisableAll, thisEnableAll;
+
+  thisWrapper = document.createElement("div");
+  thisWrapper.setAttribute("class","site_list_category_wrapper");
+  thisWrapper.setAttribute("data-category",category);
+  
+  thisTitle = document.createElement("div");
+  thisTitle.setAttribute("class","site_category_name");
+  thisTitle.setAttribute("data-category",category);
+  thisTitle.textContent = category;
+  thisTitle.addEventListener('click', toggle_menu);
+  
+  thisSites = document.createElement("div");
+  thisSites.setAttribute("id", category+"_sites");
+  thisSites.setAttribute("class", "site_list");
+  
+  thisControls = document.createElement("div");
+  thisControls.setAttribute("id", category+"_sites_controls");
+  thisControls.setAttribute("class","control-links");
+  
+  thisDisableAll = document.createElement("span");
+  thisDisableAll.setAttribute("id", "disable_all_"+category+"_sites");
+  thisDisableAll.setAttribute("class","control-link");
+  thisDisableAll.textContent = "Disable all "+category;
+  thisDisableAll.addEventListener('click', disable_all_sites);
+  
+  thisEnableAll = document.createElement("span");
+  thisEnableAll.setAttribute("id", "enable_all_"+category+"_sites");
+  thisEnableAll.setAttribute("class","control-link");
+  thisEnableAll.textContent = "Enable all "+category;
+  thisEnableAll.addEventListener('click', enable_all_sites);
+  
+//  document.getElementById('disable_all_news_sites').addEventListener('click', disable_all_sites);
+//  document.getElementById('enable_all_news_sites').addEventListener('click', enable_all_sites);
+
+  
+  thisWrapper.appendChild(thisTitle);
+  thisWrapper.appendChild(thisSites);
+  thisWrapper.appendChild(thisControls);
+  thisControls.appendChild(thisDisableAll);
+  thisControls.appendChild(thisEnableAll);
+
+  toDiv.appendChild(thisWrapper);
+
+//  <div id="news_sites_wrapper_small">
+//    <div id="news_sites"></div>
+//    <div id="news_site_controls" class="control-links">
+//      <span id="disable_all_news_sites" class="control-link">Disable all</span>
+//      <span id="enable_all_news_sites" class="control-link">Enable all</span>
+//    </div>
+//  </div>
+  
+  // loop through items here
+  try {
+//    console.log("items.sites.default", items.sites.news);
+    for (var i = 0; i < items.length; i++) { 
+      write_site_to_div(items[i], thisSites, i, false);
+    }
+  } catch(e) {}
+
+
+}
 
 function write_sites_to_page(items) {
   
@@ -352,15 +459,34 @@ function write_sites_to_page(items) {
 //      write_site_to_div(items.sites.default[i], default_sites, i, false);
 //    }
 //  } catch(e) {}
-  // default sites first
-  var news_sites = document.getElementById("news_sites");
-  news_sites.innerHTML = "";
-  try {
-    console.log("items.sites.default", items.sites.news);
-    for (var i = 0; i < items.sites.news.length; i++) { 
-      write_site_to_div(items.sites.news[i], news_sites, i, false);
+  
+    console.log("items.sites", items.sites);
+  
+  //hard-code news first...
+  var default_sites_wrapper = document.getElementById("default_sites_wrapper");
+//  console.log("items.sites.length",items.sites.length)
+  console.log("Object.keys(items.sites).length",Object.keys(items.sites).length)
+  
+  console.log("default_sites_wrapper",default_sites_wrapper);
+  //loop through site categories in items
+//  for (var i = 0; i < items.sites.length; i++) {
+  for (var i = 0; i < Object.keys(items.sites).length; i++) {
+    if (Object.keys(items.sites)[i] != "user") {
+//      console.log("i",i);
+//      console.log("write_site_category_list(Object.keys(items.sites)[i],items.sites[i],default_sites_wrapper);");
+//      console.log("write_site_category_list(",Object.keys(items.sites)[i],items.sites[Object.keys(items.sites)[i]],default_sites_wrapper);
+      write_site_category_list(Object.keys(items.sites)[i],items.sites[Object.keys(items.sites)[i]],default_sites_wrapper);
     }
-  } catch(e) {}
+  }
+//  // default sites first
+//  var news_sites = document.getElementById("news_sites");
+//  news_sites.innerHTML = "";
+//  try {
+//    console.log("items.sites.default", items.sites.news);
+//    for (var i = 0; i < items.sites.news.length; i++) { 
+//      write_site_to_div(items.sites.news[i], news_sites, i, false);
+//    }
+//  } catch(e) {}
 
   // now user sites; start #ing at default+1
   console.log("user_sites div:",document.getElementById("user_sites"));
@@ -438,8 +564,8 @@ document.getElementById('add_site_form').addEventListener('submit', add_user_sit
 //document.getElementById('disable_all_default_sites').addEventListener('click', disable_all_sites);
 //document.getElementById('enable_all_default_sites').addEventListener('click', enable_all_sites);
 
-document.getElementById('disable_all_news_sites').addEventListener('click', disable_all_sites);
-document.getElementById('enable_all_news_sites').addEventListener('click', enable_all_sites);
+//document.getElementById('disable_all_news_sites').addEventListener('click', disable_all_sites);
+//document.getElementById('enable_all_news_sites').addEventListener('click', enable_all_sites);
 
 document.getElementById('disable_all_user_sites').addEventListener('click', disable_all_sites);
 document.getElementById('enable_all_user_sites').addEventListener('click', enable_all_sites);

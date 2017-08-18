@@ -63,6 +63,22 @@ h2 {
   border-left-color: #BBBBBB; 
   border-left-width: 1px;
 }
+  
+.site_list_category_wrapper {
+  padding: 0px 0px 0px 10px;
+  margin: 0px 0px 0px 10px
+  border-style: solid;
+  border-color: blue; 
+  border-width: 1px;
+}
+  
+.site_list {
+  display: none;
+}
+
+.site_list_category_expander {
+  
+}
 
 .site_group_spacer {
   float: left;
@@ -157,6 +173,7 @@ h2 {
 .control-links {
   font-size: 10px;
   margin: 6px 0px 6px 0px;
+/*  display: none;*/
 /*
   color: blue;
   text-decoration: underline;
@@ -175,6 +192,50 @@ h2 {
   paddding: 4px 4px 4px 4px;
   margin: 4px 0px 4px 0px;
 }
+  
+  
+  
+  
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #3e8e41;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f6f6f6;
+    min-width: 230px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown a:hover {background-color: #ddd}
+
+.show {display:inline-block;}
+  
+  
 
 </style>  
   
@@ -229,6 +290,10 @@ h2 {
       <div id="default_sites_wrapper">
         <h2>Default sites</h2>
         
+        
+          
+        
+<!--
           <div id="news_sites_wrapper_small">
             <div id="news_sites"></div>
             <div id="news_site_controls" class="control-links">
@@ -236,6 +301,7 @@ h2 {
               <span id="enable_all_news_sites" class="control-link">Enable all</span>
             </div>
           </div>
+-->
         
 <!--
           <div id="default_sites_wrapper_small">
