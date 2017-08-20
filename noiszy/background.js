@@ -45,16 +45,6 @@ function get_enabled_sites(callback) {
     // build array of sites
     var sites = [];
     
-//    var sites_default = result.sites.default;
-//    for (var i=0; i < sites_default.length; i++) {
-//      if (sites_default[i].checked) {
-//        if (sites_default[i].url.indexOf("https://") == -1) {
-//          sites_default[i].url = "http://"+sites_default[i].url;
-//        }
-//        sites.push(sites_default[i].url);
-//      }
-//    }
-//    var offset = sites_default.length;
     
     console.log("result",result);
 //    var numcats = Object.keys(result.sites).length;
@@ -63,16 +53,11 @@ function get_enabled_sites(callback) {
     var thissites;
     for (var c=0; c < numcats; c++) {
       
-//      result.sites[Object.keys(result.sites)[i]]
-//      thissites = result.sites[Object.keys(result.sites)[c]];
-      thissites = result.sites[c];
-      console.log("thissites",thissites);
-      console.log("thissites[0]",thissites[0]);
-      console.log("thissites[0]",thissites[0]);
+      thissites = result.sites[c].sites;
       
       try {
         for (var i=0; i < thissites.length; i++) {
-          console.log("thissites[i]",thissites[i]);
+//          console.log("thissites[i]",thissites[i]);
           if (thissites[i].checked) {
             if (thissites[i].url.indexOf("https://") == -1) {
               thissites[i].url = "http://"+thissites[i].url;
@@ -85,46 +70,6 @@ function get_enabled_sites(callback) {
     }
     
     console.log("enabled sites: ", sites);
-    
-//    var sites_news = result.sites.news;
-//    for (var i=0; i < sites_news.length; i++) {
-//      if (sites_news[i].checked) {
-//        if (sites_news[i].url.indexOf("https://") == -1) {
-//          sites_news[i].url = "http://"+sites_news[i].url;
-//        }
-//        sites.push(sites_news[i].url);
-//      }
-//    }
-//    var offset = sites_news.length;
-//    var sites_user = result.sites.user;
-//    for (var i=0; i < sites_user.length; i++) {
-//      if (sites_user[i].checked) {
-//        if (sites_user[i].url.indexOf("https://") == -1) {
-//          sites_user[i].url = "http://"+sites_user[i].url;
-//        }
-//        sites.push(sites_user[i].url);
-//      }
-//    }    
-    
-//    var sites_news = result.sites.news;
-//    for (var i=0; i < sites_news.length; i++) {
-//      if (sites_news[i].checked) {
-//        if (sites_news[i].url.indexOf("https://") == -1) {
-//          sites_news[i].url = "http://"+sites_news[i].url;
-//        }
-//        sites.push(sites_news[i].url);
-//      }
-//    }
-//    var offset = sites_news.length;
-//    var sites_user = result.sites.user;
-//    for (var i=0; i < sites_user.length; i++) {
-//      if (sites_user[i].checked) {
-//        if (sites_user[i].url.indexOf("https://") == -1) {
-//          sites_user[i].url = "http://"+sites_user[i].url;
-//        }
-//        sites.push(sites_user[i].url);
-//      }
-//    }
     
     callback(sites);
   });
@@ -288,11 +233,14 @@ browser.runtime.onMessage.addListener( function(request, sender, sendResponse) {
   } else if (request.msg == "track add site") {
     console.log("request", request);
     ga('send','event','add site',request.added);
+    sendResponse("completed " + request.msg);
   } else if (request.msg == "track options open") {
     console.log("request", request);
     ga('send','pageview','options.html');
+    sendResponse("completed " + request.msg);
   } else if (request.msg == "track link click") {
     ga('send','pageview',request.url);
+    sendResponse("completed " + request.msg);
   } else if (request.msg == "reset") {
     initialize_noiszy(false, function(results){
       sendResponse(results);
@@ -314,71 +262,69 @@ function initialize_noiszy(preserve_preferences, callbackFunction) {
   var user_site_preset = presets.userSitePreset;
   
   // start with list of sites from presets (JSON)
-  var new_sites = JSON.parse(JSON.stringify(presets.sites));
+//  var new_sites = JSON.parse(JSON.stringify(presets.sites));
+  var new_sites = presets.sites;
 
       
   // load settings from local storage so we can work with them
   browser.storage.local.get({
-    sites: 'stored_sites',
+    sites: [],
     blockStreams: [],
     userSitePreset: []
   }, function(result) {
+    
+//    if (result) {
+    console.log("got from localStorage: ", result);
 
     // copy default from presets into local storage
-    // have to do this, or else we wind up updating presets.sites via reference
-//    var new_sites = JSON.parse(JSON.stringify(presets.sites));
-//    console.log("presets sites",new_sites);
 
-    if (preserve_preferences) {
+    if (result && preserve_preferences && result.sites.length != 0) {
       console.log("preserving preferences");
       
-//      //if "default" exists, delete "news" (if it exists) and change "default" to "news"
-//      try {
-//        if (new_sites.default) {
-//          //TODO: actually need to put it in categories.
+      //if "default" exists, change "default" to "news"
+      try {
+        if (result.default) {
+          //TODO: actually need to put it in categories.
+          //find news category
+          for (var i=0; i<new_sites.length; i++) {
+            if (new_sites[i].name == "news") {
+              //TODO: go item by item
+              new_sites[i] = result.default; //TODO: not sure that's going to work, might want to test it...
+            }
+          }
 //          new_sites.news ? delete new_sites.news: ''; // delete if it exists in result; will delete from lS at the end
 //          new_sites = JSON.parse(JSON.stringify(new_sites).split('"default":').join('"news":')); // change name
-//        }
-//      } catch(e) {
-//        console.log("trouble updating preferences...");
-//        // so just delete them...?
-//        // TODO: delete prefs
-//      }
+          
+          //TODO: then clear out result.default & also get it out of localStorage
+          result.default = [];
+        }
+      } catch(e) {
+        console.log("trouble updating preferences...");
+        // so just delete them...?
+        // TODO: delete prefs
+      }
       
 
       // copy preferences on/off values into new_sites
       
-      // news sites first
-      // TODO: change this to loop over whatever is in 'sites'
-      try {
-        if (result.sites.news) { 
-          var stored_sites = result.sites.news;
-          //cycle through
-          for (var i=0; i<stored_sites.length; i++) {
-            for (var j=0; j<sites.news.length; j++) {
-
-              //this should be the other way around.  stored URLs may be longer.
-//              if (new_sites.default[j].url.indexOf(stored_sites[i].url) > -1) {
-              if (stored_sites[i].url.indexOf(new_sites.news[j].url) > -1) {
-                //then update new_sites[j] with checked value from sites[i]
-                new_sites.news[j].checked = stored_sites[i].checked;
-              }
+      console.log("new_sites.length", new_sites.length);
+      for (var i=0; i<new_sites.length; i++) {
+//        console.log("checking for presets for new_sites[i].name", new_sites[i].name);
+        // if category also exists in result.sites, copy result.sites over into new_sites
+        for (var j=0; j<result.sites.length; j++) {
+//          console.log("checking for presets for result.sites[j].name", result.sites[j].name);
+          try {
+            if (new_sites[i].name == result.sites[j].name) {
+//              console.log("match!");
+              //copy it over
+              new_sites[i] = result.sites[j]; //TODO: check values to make sure they're all there - menuOpen, name, etc.
+              j = result.sites.length; //end inner loop
             }
+          } catch(e) {
+            console.log("error copying prefs over presets", e);
           }
         }
-      } catch(e) {}
-
-      // user sites too
-      try {
-        if (result.sites.user) { 
-          // then just copy result.sites.user over to sites.user
-
-//          new_sites.user = result.sites.user;
-          new_sites.user = JSON.parse(JSON.stringify(result.sites.user));
-          console.log("copied user sites");
-          console.log("sites",sites);
-        }
-      } catch(e) {}
+      }
       
       //and block streams
       block_streams = result.blockStreams;
@@ -397,18 +343,6 @@ function initialize_noiszy(preserve_preferences, callbackFunction) {
       userSitePreset: user_site_preset,
       sites: new_sites
     }, function (result) {
-      //check to make sure it worked
-//      browser.storage.local.get({
-//        'sites': [],
-//        'enabled': [],
-//        'baseInterval': [],
-//        'blockStreams': [],
-//        'userSitePreset': []
-//      }, function (result) {
-//        console.log("result", result);
-//
-//        callbackFunction(result);
-//      });
       callbackFunction(result);
     });
     

@@ -78,6 +78,9 @@ h2 {
   margin: 0px;
 }
   
+.site_wrapper {
+}
+  
 .site_list_category_wrapper {
 /*
   padding: 0px 0px 0px 10px;
@@ -93,7 +96,7 @@ h2 {
   
 .site_list {
   display: none;
-/*  padding-left: 10px;*/
+  padding-left: 16px;
 }
 
 .site_list_category_expander {
@@ -102,6 +105,7 @@ h2 {
   
 .site_category_name {
   font-size:12px;
+  height:18px;
 }
   
 .triangle_right {
@@ -337,30 +341,6 @@ h2 {
       <div id="default_sites_wrapper">
         <h2>Default sites</h2>
         <div id="default_sites_inner_wrapper"></div>
-        
-          
-        
-<!--
-          <div id="news_sites_wrapper_small">
-            <div id="news_sites"></div>
-            <div id="news_site_controls" class="control-links">
-              <span id="disable_all_news_sites" class="control-link">Disable all</span>
-              <span id="enable_all_news_sites" class="control-link">Enable all</span>
-            </div>
-          </div>
--->
-        
-<!--
-          <div id="default_sites_wrapper_small">
-            Default sites would go here - will remove
-            <div id="default_sites"></div>
-            <div id="default_site_controls" class="control-links">
-              <div id="disable_all_default_sites">Disable all</a>
-              <div id="enable_all_default_sites">Enable all</a>
-            </div>
-          </div>
--->
-        
       </div>
       
       <div id="user_sites_wrapper">
@@ -369,7 +349,7 @@ h2 {
         </div>
         <h2>User-added sites</h2>
         <div id="user_site_alerts" class="alerts"></div>
-        <div id="add_site_form_div" class="indent">
+        <div id="add_site_form_div">
           <form id="add_site_form" action="#">
             <input type="text" id="new_site" style="width: 250px;" value="wikipedia.org/wiki/Special:Random">
             <button type="submit"> &nbsp; Add &nbsp; </button>

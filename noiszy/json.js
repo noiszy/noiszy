@@ -6,6 +6,7 @@ var presets = {
     {
       "name" : "user",
       "displayName" : "User",
+      "order" : 1,
       "menuOpen": false,
       "sites" : []
     },
@@ -176,6 +177,35 @@ var presets = {
           "checked": "true"
         }
       ]
+    },
+    {
+      "name" : "politics",
+      "displayName" : "Politics",
+      "order": 10,
+      "menuOpen": false,
+      "sites" : [
+       {
+          "url": "slate.com",
+          "checked": ""
+        },
+        {
+          "url": "salon.com",
+          "checked": ""
+        },
+        {
+          "url": "infowars.com",
+          "checked": ""
+        },
+        {
+          "url": "dailykos.com",
+          "checked": ""
+        },
+        {
+          "url": "nationalreview.com",
+          "checked": ""
+        }
+      ]
     }
+
   ]
 };
