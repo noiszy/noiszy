@@ -3,6 +3,7 @@
 <head>
   <title>Noiszy Options</title>
 <style>
+
 body {
   background-color: white;
   font-family: Arial, Helvetica, sans-serif;
@@ -26,6 +27,8 @@ button {
   font-weight: bold;
 }
   
+  
+
 h2 {
 //    color: maroon;
 //    margin-left: 40px;
@@ -47,11 +50,17 @@ h2 {
 /*#news_sites_wrapper {*/
   width: 30%;
   float: left;
-  padding: 0px 0px 10px 0px;
+/*  padding: 0px 0px 10px 0px;*/
+  padding: 0px 0px 0px 0px;
   margin-top: 0px;
   border-right-style: solid;
   border-right-color: #BBBBBB; 
   border-right-width: 1px;
+}
+  
+#default_sites_inner_wrapper {
+  padding: 0px;
+  margin: 0px;
 }
   
 #user_sites_wrapper {
@@ -64,21 +73,59 @@ h2 {
   border-left-width: 1px;
 }
   
+#user_sites_inner_wrapper {
+  padding: 0px;
+  margin: 0px;
+}
+  
 .site_list_category_wrapper {
+/*
   padding: 0px 0px 0px 10px;
   margin: 0px 0px 0px 10px
+*/
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px
   border-style: solid;
   border-color: blue; 
   border-width: 1px;
 }
   
+  
 .site_list {
   display: none;
+/*  padding-left: 10px;*/
 }
 
 .site_list_category_expander {
   
 }
+  
+.site_category_name {
+  font-size:12px;
+}
+  
+.triangle_right {
+/*.site_category_name::before {*/
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 8px 0 8px 16px;
+  border-color: transparent transparent transparent #a3a3a3;
+  float: left;
+  clear: left;
+}
+  
+.triangle_down {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 16px 8px 0 8px;
+  border-color: #a3a3a3 transparent transparent transparent;
+  float: left;
+  clear: left;
+}
+  
+
 
 .site_group_spacer {
   float: left;
@@ -173,7 +220,7 @@ h2 {
 .control-links {
   font-size: 10px;
   margin: 6px 0px 6px 0px;
-/*  display: none;*/
+  display: none;
 /*
   color: blue;
   text-decoration: underline;
@@ -289,7 +336,7 @@ h2 {
     <div id="sites_wrapper">
       <div id="default_sites_wrapper">
         <h2>Default sites</h2>
-        
+        <div id="default_sites_inner_wrapper"></div>
         
           
         
@@ -328,10 +375,12 @@ h2 {
             <button type="submit"> &nbsp; Add &nbsp; </button>
           </form>
         </div>
-        <div id="user_sites"></div>
-        <div id="user_site_controls" class="control-links">
-          <a id="disable_all_user_sites" href="#">Disable all</a>
-          <a id="enable_all_user_sites" href="#">Enable all</a>
+        <div id="user_sites_inner_wrapper">
+          <div id="user_sites"></div>
+          <div id="user_site_controls" class="control-links">
+            <a id="disable_all_user_sites" href="#">Disable all</a>
+            <a id="enable_all_user_sites" href="#">Enable all</a>
+          </div>
         </div>
       </div>
       <div style='clear:both'></div>

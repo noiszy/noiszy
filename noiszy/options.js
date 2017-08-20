@@ -26,33 +26,19 @@ function status_alert(divId, message, time) {
 // Saves options to storage
 function save_options() {
 
-//  // get the default inputs
-//  var default_sites = document.getElementById("default_sites");
-//  var default_site_list = default_sites.getElementsByTagName("input");
-//  var sites_formatted = new Object();
-//  sites_formatted.default = [];
-//  console.log("default_site list: ",default_site_list);
-//  
-//  // loop through the displayed sites and make an array; then update what's saved
-//  for (var i=0; i < default_site_list.length; i++) { 
-//    console.log("i: ",i,default_site_list[i]);
-//    sites_formatted.default[i] = new Object();
-//    sites_formatted.default[i].url = default_site_list[i].value;
-//    sites_formatted.default[i].checked = default_site_list[i].checked;
-//  }
-  
   // get the default inputs
   
-//  var news_sites = document.getElementById("news_sites");
   var default_sites = document.getElementById("default_sites_wrapper");
 //  console.log("news_sites: ",news_sites);
-//  var news_site_list = news_sites.getElementsByTagName("input");
 
   // get the categories
   var site_categories = default_sites.getElementsByClassName("site_list_category_wrapper");
   console.log("site_categories: ",site_categories);
+
   var cat, inputs;
-  var sites_formatted = new Object();
+//  var sites_formatted = new Object();
+  var sites_formatted = [];
+  var thisCategory, thisSite;
   
   for (var c=0; c < site_categories.length; c++) {
     // get name
@@ -60,52 +46,64 @@ function save_options() {
     console.log('site_categories[c].getAttribute("data-category"): ',site_categories[c].getAttribute("data-category"));
     cat = site_categories[c].getAttribute("data-category");
     console.log("cat",cat);
-  
+
+    thisCategory = {};
+    thisCategory.name = site_categories[c].getAttribute("data-category");
+    thisCategory.displayName = site_categories[c].getAttribute("data-category-displayName");
+//    thisSite = new Object();  // TODO: is this going to cause a memory problem?
+    ////////
+    //TODO: displayName, order, etc
+    ////////
+    
     inputs = site_categories[c].getElementsByTagName("input");
     console.log("inputs: ",inputs);
 //    var sites_formatted = new Object();
   //  sites_formatted.default = [];
-    sites_formatted[cat] = [];
+//    sites_formatted[cat] = [];
+    thisCategory.sites = []
     console.log("sites_formatted[cat]: ",sites_formatted[cat]);
 
     // loop through the displayed sites and make an array; then update what's saved
     for (var i=0; i < inputs.length; i++) { 
       console.log("i: ",i,inputs[i]);
-      sites_formatted[cat][i] = new Object();
-      sites_formatted[cat][i].url = inputs[i].value;
-      sites_formatted[cat][i].checked = inputs[i].checked;
+//      thisSite = new Object();
+//      thisSite = new Object();
+//      thisSite.url = inputs[i].value;
+//      thisSite.checked = inputs[i].checked;
+//      console.log(thisSite);
+//      thisCategory.sites.push(thisSite);
+      thisCategory.sites.push({"url" : inputs[i].value, "checked" : inputs[i].checked});
     }
+    
+    sites_formatted.push(thisCategory);
   }
-  
-//  var news_site_list = news_sites.getElementsByTagName("input");
-//  console.log("news_site_list: ",news_site_list);
-//  var sites_formatted = new Object();
-////  sites_formatted.default = [];
-//  sites_formatted.news = [];
-//  console.log("news_site list: ",news_site_list);
-//  
-//  // loop through the displayed sites and make an array; then update what's saved
-//  for (var i=0; i < news_site_list.length; i++) { 
-//    console.log("i: ",i,news_site_list[i]);
-//    sites_formatted.news[i] = new Object();
-//    sites_formatted.news[i].url = news_site_list[i].value;
-//    sites_formatted.news[i].checked = news_site_list[i].checked;
-//  }
-//  
   
   // get the user inputs
   var user_sites = document.getElementById("user_sites");
   var user_site_list = user_sites.getElementsByTagName("input");
-  sites_formatted.user = [];
+//  sites_formatted.user = [];
+  thisCategory = {};
+  thisCategory.name = "user";
+  thisCategory.displayName = "User";
+  thisCategory.sites = [];
+  
   console.log("user_site list: ",user_site_list);
   
   // loop through the displayed sites and make an array; then update what's saved
   for (var i=0; i < user_site_list.length; i++) { 
     console.log("i: ",i,user_site_list[i]);
-    sites_formatted.user[i] = new Object();
-    sites_formatted.user[i].url = user_site_list[i].value;
-    sites_formatted.user[i].checked = user_site_list[i].checked;
+//    sites_formatted.user[i] = new Object();
+//    sites_formatted.user[i].url = user_site_list[i].value;
+//    sites_formatted.user[i].checked = user_site_list[i].checked;
+//    thisSite.url = inputs[i].value;
+//    thisSite.checked = inputs[i].checked;
+//    thisCategory.sites.push(thisSite);
+    thisCategory.sites.push({"url" : inputs[i].value, "checked" : inputs[i].checked});
+
   }
+  
+  sites_formatted.push(thisCategory);
+
 
   // also check other options
   var block_streams = document.getElementById("block_streams").checked;
@@ -247,7 +245,14 @@ function add_user_site(event) {
     new_site_obj.url = new_site;
     new_site_obj.checked = "checked";
     
-    items.sites.user.push(new_site_obj);
+//    items.sites.user.push(new_site_obj);
+    //get the user array
+    for (var i=0; i<items.sites.length; i++) {
+      if (items.sites[i].name == "user") {
+        console.log("got 'user' sites obj: ", items.sites[i]);
+        items.sites[i].sites.push(new_site_obj);
+      }
+    }
     
 /*    var i = 0;
     if (items.sites.user) {
@@ -329,9 +334,10 @@ function remove_site() {
 }
 
 // writes a site to the site list on the page
-function write_site_to_div(site, div, i, delete_button) {
+function write_site_to_div(site, cat, div, i, delete_button) {
   var thiswrapper, thisid, thisurl, thisinput, thislabel, thisdelete;
-  thisid = "s" + i;
+//  thisid = "s" + i;
+  thisid = cat + i;
   thisurl = site.url;
   thischecked = site.checked;
   
@@ -377,24 +383,38 @@ function toggle_menu() {
 //  console.log("toggle menu click");
 //  console.log("this");
 //  console.log(this);
-  var menuId = this.getAttribute("data-category") + "_sites";
+//  var menuId = this.getAttribute("data-category") + "_sites";
+  var menuId = this.getAttribute("data-category");
 //  console.log("menuId", menuId);
 //  var menu = document.getElementById(menuId);
-  document.getElementById(menuId).classList.toggle("show");
-//  document.getElementById(menuId+"_controls").classList.toggle("show");
+  document.getElementById(menuId+"_sites").classList.toggle("show");
+  document.getElementById(menuId+"_sites_controls").classList.toggle("show");
+  //change triangle
+  document.getElementById(menuId+"_triangle").classList.toggle("triangle_right");
+  document.getElementById(menuId+"_triangle").classList.toggle("triangle_down");
 }
   
-function write_site_category_list(category,items,toDiv,iOffset) {
-  var thisWrapper, thisTitle, thisSites, thisControls, thisDisableAll, thisEnableAll;
+function write_site_category_list(categoryObj,toDiv,iOffset) {
+  var thisWrapper, thisTitle, thisSites, thisControls, thisDisableAll, thisEnableAll, thisTriangle;
+  
+  var category = categoryObj.name
+  var displayName = categoryObj.displayName;
 
   thisWrapper = document.createElement("div");
   thisWrapper.setAttribute("class","site_list_category_wrapper");
   thisWrapper.setAttribute("data-category",category);
+  thisWrapper.setAttribute("data-category-displayName",displayName);
+  
+  thisTriangle = document.createElement("div");
+  thisTriangle.setAttribute("class","triangle_right");
+  thisTriangle.setAttribute("id", category+"_triangle");
   
   thisTitle = document.createElement("div");
   thisTitle.setAttribute("class","site_category_name");
   thisTitle.setAttribute("data-category",category);
-  thisTitle.textContent = category;
+  thisTitle.appendChild(thisTriangle);
+//  thisTitle.textContent = category;
+  thisTitle.innerHTML += "&nbsp;" + displayName;
   thisTitle.addEventListener('click', toggle_menu);
   
   thisSites = document.createElement("div");
@@ -408,13 +428,13 @@ function write_site_category_list(category,items,toDiv,iOffset) {
   thisDisableAll = document.createElement("span");
   thisDisableAll.setAttribute("id", "disable_all_"+category+"_sites");
   thisDisableAll.setAttribute("class","control-link");
-  thisDisableAll.textContent = "Disable all "+category;
+  thisDisableAll.textContent = "Disable all "+displayName;
   thisDisableAll.addEventListener('click', disable_all_sites);
   
   thisEnableAll = document.createElement("span");
   thisEnableAll.setAttribute("id", "enable_all_"+category+"_sites");
   thisEnableAll.setAttribute("class","control-link");
-  thisEnableAll.textContent = "Enable all "+category;
+  thisEnableAll.textContent = "Enable all "+displayName;
   thisEnableAll.addEventListener('click', enable_all_sites);
   
 //  document.getElementById('disable_all_news_sites').addEventListener('click', disable_all_sites);
@@ -440,8 +460,10 @@ function write_site_category_list(category,items,toDiv,iOffset) {
   // loop through items here
   try {
 //    console.log("items.sites.default", items.sites.news);
-    for (var i = 0; i < items.length; i++) { 
-      write_site_to_div(items[i], thisSites, i, false);
+//    for (var i = 0; i < items.length; i++) { 
+//      write_site_to_div(items[i], thisSites, i, false);
+    for (var i = 0; i < categoryObj.sites.length; i++) { 
+      write_site_to_div(categoryObj.sites[i], categoryObj.name, thisSites, i, false);
     }
   } catch(e) {}
 
@@ -450,59 +472,37 @@ function write_site_category_list(category,items,toDiv,iOffset) {
 
 function write_sites_to_page(items) {
   
-//  // default sites first
-//  var default_sites = document.getElementById("default_sites");
-//  default_sites.innerHTML = "";
-//  try {
-//    console.log("items.sites.default", items.sites.default);
-//    for (var i = 0; i < items.sites.default.length; i++) { 
-//      write_site_to_div(items.sites.default[i], default_sites, i, false);
-//    }
-//  } catch(e) {}
+  console.log("items.sites", items.sites);
   
-    console.log("items.sites", items.sites);
+  var default_sites_inner_wrapper = document.getElementById("default_sites_inner_wrapper");  
+  // clear so we can write all of them
+  default_sites_inner_wrapper.innerHTML = "";
   
-  //hard-code news first...
-  var default_sites_wrapper = document.getElementById("default_sites_wrapper");
-//  console.log("items.sites.length",items.sites.length)
-  console.log("Object.keys(items.sites).length",Object.keys(items.sites).length)
   
-  console.log("default_sites_wrapper",default_sites_wrapper);
+  console.log("default_sites_inner_wrapper",default_sites_inner_wrapper);
   //loop through site categories in items
-//  for (var i = 0; i < items.sites.length; i++) {
-  for (var i = 0; i < Object.keys(items.sites).length; i++) {
-    if (Object.keys(items.sites)[i] != "user") {
-//      console.log("i",i);
-//      console.log("write_site_category_list(Object.keys(items.sites)[i],items.sites[i],default_sites_wrapper);");
-//      console.log("write_site_category_list(",Object.keys(items.sites)[i],items.sites[Object.keys(items.sites)[i]],default_sites_wrapper);
-      write_site_category_list(Object.keys(items.sites)[i],items.sites[Object.keys(items.sites)[i]],default_sites_wrapper);
+  for (var i = 0; i < items.sites.length; i++) {
+    if (items.sites[i].name != "user") {
+      console.log("writing default sites to page: ", items.sites[i]);
+      write_site_category_list(items.sites[i],default_sites_inner_wrapper);
+      
+    } else { //user sites
+      console.log("writing user sites to page: ", items.sites[i]);
+
+      var user_sites = document.getElementById("user_sites");
+      user_sites.innerHTML = "";
+
+      console.log("user_sites div:",document.getElementById("user_sites_inner_wrapper"));
+      console.log("erased");
+
+      for (var u=0; u<items.sites[i].sites.length; u++) {
+        console.log("u: ", u);
+        console.log('write_site_to_div(items.sites[i].sites[u], "user", user_sites, u, true);');
+        console.log(items.sites[i].sites[u]);
+        write_site_to_div(items.sites[i].sites[u], "user", user_sites, u, true);
+      }
     }
   }
-//  // default sites first
-//  var news_sites = document.getElementById("news_sites");
-//  news_sites.innerHTML = "";
-//  try {
-//    console.log("items.sites.default", items.sites.news);
-//    for (var i = 0; i < items.sites.news.length; i++) { 
-//      write_site_to_div(items.sites.news[i], news_sites, i, false);
-//    }
-//  } catch(e) {}
-
-  // now user sites; start #ing at default+1
-  console.log("user_sites div:",document.getElementById("user_sites"));
-  var user_sites = document.getElementById("user_sites");
-  user_sites.innerHTML = "";
-  console.log("erased");
-
-//  var offset = items.sites.default.length;
-  var offset = items.sites.news.length;
-  try {
-    console.log("items.sites.user",items.sites.user);
-    for (var i = 0; i < items.sites.user.length; i++) { 
-      console.log("writing site", i);
-      write_site_to_div(items.sites.user[i], user_sites, i+offset, true);
-    }
-  } catch(e) {}
 
   return;
 }

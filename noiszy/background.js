@@ -57,13 +57,15 @@ function get_enabled_sites(callback) {
 //    var offset = sites_default.length;
     
     console.log("result",result);
-    var numcats = Object.keys(result.sites).length;
+//    var numcats = Object.keys(result.sites).length;
+    var numcats = result.sites.length;
     console.log("numcats",numcats);
     var thissites;
     for (var c=0; c < numcats; c++) {
       
 //      result.sites[Object.keys(result.sites)[i]]
-      thissites = result.sites[Object.keys(result.sites)[c]];
+//      thissites = result.sites[Object.keys(result.sites)[c]];
+      thissites = result.sites[c];
       console.log("thissites",thissites);
       console.log("thissites[0]",thissites[0]);
       console.log("thissites[0]",thissites[0]);
@@ -330,17 +332,18 @@ function initialize_noiszy(preserve_preferences, callbackFunction) {
     if (preserve_preferences) {
       console.log("preserving preferences");
       
-      //if "default" exists, delete "news" (if it exists) and change "default" to "news"
-      try {
-        if (new_sites.default) {
-          new_sites.news ? delete new_sites.news: ''; // delete if it exists in result; will delete from lS at the end
-          new_sites = JSON.parse(JSON.stringify(new_sites).split('"default":').join('"news":')); // change name
-        }
-      } catch(e) {
-        console.log("trouble updating preferences...");
-        // so just delete them...?
-        // TODO: delete prefs
-      }
+//      //if "default" exists, delete "news" (if it exists) and change "default" to "news"
+//      try {
+//        if (new_sites.default) {
+//          //TODO: actually need to put it in categories.
+//          new_sites.news ? delete new_sites.news: ''; // delete if it exists in result; will delete from lS at the end
+//          new_sites = JSON.parse(JSON.stringify(new_sites).split('"default":').join('"news":')); // change name
+//        }
+//      } catch(e) {
+//        console.log("trouble updating preferences...");
+//        // so just delete them...?
+//        // TODO: delete prefs
+//      }
       
 
       // copy preferences on/off values into new_sites
